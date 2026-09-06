@@ -1,0 +1,202 @@
+// Prisma schema — CRM Podología
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Conexión "pooled" (Supabase Transaction pooler, puerto 6543) que usa la app
+  url       = env("DATABASE_URL")
+  // Conexión directa (puerto 5432) que Prisma usa SOLO para migraciones
+  directUrl = env("DIRECT_URL")
+}
+
+/// Paciente de la clínica. Cada paciente tiene UNA sola hoja clínica (1:1).
+model Paciente {
+  id       String  @id @default(cuid())
+  nombre   String
+  telefono String?
+
+  hojaClinica HojaClinica?
+  citas       Cita[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([nombre])
+}
+
+/// Hoja clínica única por paciente. `pacienteId @unique` fuerza la relación 1:1.
+model HojaClinica {
+  id         String   @id @default(cuid())
+  folio      Int      @unique
+  paciente   Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  pacienteId String   @unique
+
+  // Banderas médicas (se resaltan en la UI si están activas)
+  diabetico  Boolean  @default(false)
+  hipertenso Boolean  @default(false)
+
+  // Otras enfermedades / detalles de salud (texto libre)
+  otrasCondiciones String?
+  alergias         String?
+  // Comentario que se destaca en amarillo cuando hay enfermedades específicas
+  comentarioSalud  String?
+
+  // Datos clínicos
+  motivoConsulta String?
+  antecedentes   String?
+  observaciones  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum EstadoCita {
+  AGENDADA
+  LLEGO
+  LLEGO_TARDE
+  NO_SHOW
+}
+
+/// Cita importada desde Google Calendar (el calendario es la fuente; solo lectura).
+model Cita {
+  id            String     @id @default(cuid())
+  googleEventId String     @unique
+  titulo        String
+  inicio        DateTime
+  fin           DateTime?
+  estado        EstadoCita @default(AGENDADA)
+  notas         String?
+
+  paciente   Paciente? @relation(fields: [pacienteId], references: [id], onDelete: SetNull)
+  pacienteId String?
+
+  podologa   Podologa? @relation(fields: [podologaId], references: [id], onDelete: SetNull)
+  podologaId String?
+
+  pagos Pago[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([inicio])
+}
+
+/// Podóloga que atiende. Se liga a citas y pagos para calcular comisiones (Fase 4).
+/// `comisionPct` = % FIJO que gana sobre cada servicio que cobra (modelo del dueño).
+model Podologa {
+  id          String  @id @default(cuid())
+  nombre      String
+  activa      Boolean @default(true)
+  comisionPct Int     @default(30)
+
+  citas Cita[]
+  pagos Pago[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum MetodoPago {
+  EFECTIVO
+  TARJETA
+}
+
+/// Servicio que realiza una podóloga (Consulta, uñas, etc.). Genera comisión.
+model Servicio {
+  id     String  @id @default(cuid())
+  nombre String
+  precio Decimal @db.Decimal(10, 2)
+  activo Boolean @default(true)
+
+  pagos Pago[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Producto de venta (desinfectantes, cremas, etc.). NO genera comisión.
+/// Se registra costo, precio de venta (utilidad = venta − costo) e inventario.
+model Producto {
+  id          String  @id @default(cuid())
+  nombre      String
+  precioVenta Decimal @db.Decimal(10, 2)
+  costo       Decimal @default(0) @db.Decimal(10, 2)
+  stock       Int     @default(0)
+  activo      Boolean @default(true)
+
+  ventas Pago[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Cobro registrado. Puede ser un SERVICIO (con comisión de la podóloga) o la
+/// VENTA de un producto (con utilidad y descuento de inventario, sin comisión).
+/// Comisión y utilidad se guardan como snapshot (no cambian si luego editas precios).
+model Pago {
+  id       String     @id @default(cuid())
+  monto    Decimal    @db.Decimal(10, 2)
+  metodo   MetodoPago @default(EFECTIVO)
+  comision Decimal    @default(0) @db.Decimal(10, 2)
+  utilidad Decimal    @default(0) @db.Decimal(10, 2)
+  cantidad Int        @default(1)
+  notas    String?
+  fecha    DateTime   @default(now())
+
+  servicio   Servicio? @relation(fields: [servicioId], references: [id], onDelete: SetNull)
+  servicioId String?
+
+  producto   Producto? @relation(fields: [productoId], references: [id], onDelete: SetNull)
+  productoId String?
+
+  podologa   Podologa? @relation(fields: [podologaId], references: [id], onDelete: SetNull)
+  podologaId String?
+
+  cita   Cita?   @relation(fields: [citaId], references: [id], onDelete: SetNull)
+  citaId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fecha])
+  @@index([podologaId])
+}
+
+enum TipoMovimiento {
+  ENTRADA
+  SALIDA
+}
+
+/// Movimiento manual de efectivo en caja (entrada = fondo/ingreso extra,
+/// salida = gasto/retiro). Se usa para el corte de caja diario.
+model MovimientoCaja {
+  id       String         @id @default(cuid())
+  tipo     TipoMovimiento
+  monto    Decimal        @db.Decimal(10, 2)
+  concepto String
+  fecha    DateTime       @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fecha])
+}
+
+/// Conexión OAuth del dueño con Google Calendar (tokens + calendario elegido).
+/// Un registro por usuario (single-user por ahora).
+model GoogleConexion {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  accessToken    String
+  refreshToken   String?
+  expiryDate     DateTime?
+  calendarId     String?
+  calendarNombre String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
