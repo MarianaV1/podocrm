@@ -23,6 +23,7 @@ import { PodologaSelect } from "./podologa-select";
 import { PacientePicker } from "./paciente-picker";
 import { PagoBoton } from "./pago-boton";
 import { eliminarPago } from "@/app/actions/pagos";
+import { IS_DEMO } from "@/lib/demo";
 
 const fmtFechaHora = new Intl.DateTimeFormat("es-MX", {
   weekday: "short",
@@ -51,9 +52,11 @@ export default async function CitasPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const conexion = user
-    ? await prisma.googleConexion.findUnique({ where: { userId: user.id } })
-    : null;
+  // En modo demo no se usa Google: las citas vienen sembradas.
+  const conexion =
+    user && !IS_DEMO
+      ? await prisma.googleConexion.findUnique({ where: { userId: user.id } })
+      : null;
 
   let calendarios: CalendarioGoogle[] = [];
   let errorCalendarios = false;
@@ -122,17 +125,19 @@ export default async function CitasPage({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Citas</h1>
         <p className="text-sm text-zinc-500">
-          Sincroniza las citas desde tu Google Calendar.
+          {IS_DEMO
+            ? "Citas de ejemplo. Marca la llegada y registra los cobros."
+            : "Sincroniza las citas desde tu Google Calendar."}
         </p>
       </div>
 
-      {error && (
+      {error && !IS_DEMO && (
         <p className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-200">
           Hubo un problema al conectar con Google. Intenta de nuevo.
         </p>
       )}
 
-      {!conexion ? (
+      {IS_DEMO ? null : !conexion ? (
         <section className="rounded-lg border border-black/10 p-6 dark:border-white/10">
           <h2 className="text-base font-semibold">Conecta tu Google Calendar</h2>
           <p className="mt-1 max-w-prose text-sm text-zinc-600 dark:text-zinc-400">

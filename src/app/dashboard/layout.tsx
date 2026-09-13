@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/actions/auth";
+import { IS_DEMO } from "@/lib/demo";
 
 export default async function DashboardLayout({
   children,
@@ -18,6 +19,11 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-full flex-col">
+      {IS_DEMO && (
+        <div className="no-print bg-blue-600 px-6 py-1.5 text-center text-xs font-medium text-white">
+          Modo demo · datos ficticios · se reinicia periódicamente
+        </div>
+      )}
       <header className="no-print flex items-center justify-between border-b border-black/10 px-6 py-3 dark:border-white/10">
         <div className="flex items-center gap-6">
           <Link href="/dashboard" className="font-semibold">
