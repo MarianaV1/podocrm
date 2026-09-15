@@ -13,7 +13,7 @@ la demo"* y estás dentro, con datos ficticios.
 
 ## El reto
 
-La dueña de una clínica de podología gestionaba todo de forma manual: los datos
+El dueño de una clínica de podología gestionaba todo de forma manual: los datos
 de sus clientes en notas de Excel y las hojas clínicas en expedientes físicos
 dentro de un archivero. Esto hacía lento consultar el historial de un paciente,
 imposible sacar reportes (como el que exige la Secretaría de Salud) y propenso a
@@ -31,7 +31,7 @@ Un CRM web hecho a la medida del negocio, que cubre todo el ciclo:
   clínica única (folio, banderas médicas, alergias) e impresión en PDF cuando se
   necesita en papel.
 - **Agenda conectada a Google Calendar** — las citas se importan del calendario
-  que la dueña ya usa (solo lectura, sin tocar su flujo), agrupadas por semana y
+  que el dueño ya usa (solo lectura, sin tocar su flujo), agrupadas por semana y
   día, con marcado de asistencia.
 - **Cobros, comisiones e inventario** — cada cita registra su pago (efectivo o
   tarjeta); la comisión de la podóloga se calcula sola; los productos de venta
@@ -41,11 +41,11 @@ Un CRM web hecho a la medida del negocio, que cubre todo el ciclo:
 
 ## Decisiones técnicas destacadas
 
-- **El calendario como fuente de verdad.** En vez de obligar a la dueña a agendar
+- **El calendario como fuente de verdad.** En vez de obligar al dueño a agendar
   en el CRM, el sistema *lee* su Google Calendar (nunca escribe). El emparejado
   cita↔paciente auto-liga solo coincidencias exactas y ofrece sugerencias por
   parecido + un buscador, pensado para escalar a miles de clientes.
-- **Modelo de comisiones fiel al negocio.** Analicé el Excel real de la dueña para
+- **Modelo de comisiones fiel al negocio.** Analicé el Excel real del dueño para
   descubrir que la comisión es un **porcentaje fijo por podóloga** (no por
   servicio) y que el reporte separa comisión en efectivo vs. tarjeta. El sistema
   replica exactamente esa lógica.
@@ -78,7 +78,6 @@ Un CRM web hecho a la medida del negocio, que cubre todo el ciclo:
 
 ## Capturas
 
-<!-- Sube las imágenes a docs/screenshots/ y actualiza las rutas -->
 
 | | |
 |---|---|
