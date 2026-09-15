@@ -3,7 +3,7 @@
 > Un sistema de gestión a medida que reemplazó hojas de Excel y expedientes de
 > papel por un flujo digital: pacientes, citas, cobros, comisiones e inventario.
 
-**🔗 [Probar la demo en vivo](https://TU-URL.vercel.app)** — un clic en *"Entrar a
+**🔗 [Probar la demo en vivo](https://podocrm-sandy.vercel.app/)** — un clic en *"Entrar a
 la demo"* y estás dentro, con datos ficticios.
 
 **Rol:** Desarrollo full-stack (producto, diseño y código).

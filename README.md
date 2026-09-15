@@ -5,7 +5,7 @@ clínica, agenda de citas sincronizada con Google Calendar, cobros con comisione
 por podóloga, inventario de productos, corte de caja diario y reporte para la
 Secretaría de Salud.
 
-**[▶ Ver demo en vivo](https://TU-URL.vercel.app)** · Entra con un clic con el
+**[▶ Ver demo en vivo](https://podocrm-sandy.vercel.app/)** · Entra con un clic con el
 botón **"Entrar a la demo"** (datos ficticios, sin registro).
 
 ---
