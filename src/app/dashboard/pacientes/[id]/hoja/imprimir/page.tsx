@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { PrintButton } from "./print-button";
 
@@ -26,9 +27,9 @@ export default async function ImprimirHojaPage({
       <div className="no-print mb-4 flex items-center justify-between">
         <Link
           href={`/dashboard/pacientes/${paciente.id}`}
-          className="text-sm text-zinc-500 hover:underline"
+          className="inline-flex items-center gap-1 text-sm text-muted hover:text-foreground"
         >
-          ← Volver a la ficha
+          <ArrowLeft size={15} /> Volver a la ficha
         </Link>
         <PrintButton />
       </div>

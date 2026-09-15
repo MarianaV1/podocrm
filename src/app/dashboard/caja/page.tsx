@@ -1,7 +1,14 @@
 import type { ReactNode } from "react";
+import { Wallet, Banknote, CreditCard } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { hoyMX, rangoDia, fechaLegible } from "@/lib/fecha";
 import { crearMovimiento, eliminarMovimiento } from "@/app/actions/caja";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatCard } from "@/components/ui/stat-card";
+import { Card, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Field, Input, Select } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { SelectorDia } from "./selector-dia";
 
 const fmt = new Intl.NumberFormat("es-MX", {
@@ -79,35 +86,42 @@ export default async function CajaPage({
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Corte de caja</h1>
-        <p className="text-sm text-zinc-500">{fechaLegible(fecha)}</p>
-      </div>
+      <PageHeader title="Corte de caja" subtitle={fechaLegible(fecha)} />
 
       <SelectorDia fecha={fecha} hoy={hoy} />
 
       {/* Totales principales */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Tarjeta titulo="Total del día" valor={fmt.format(totalGeneral)} grande />
-        <Tarjeta titulo="Efectivo" valor={fmt.format(totalEfectivo)} />
-        <Tarjeta titulo="Tarjeta (T.C.)" valor={fmt.format(totalTarjeta)} />
+        <StatCard
+          label="Total del día"
+          value={fmt.format(totalGeneral)}
+          icon={<Wallet size={18} />}
+        />
+        <StatCard
+          label="Efectivo"
+          value={fmt.format(totalEfectivo)}
+          icon={<Banknote size={18} />}
+        />
+        <StatCard
+          label="Tarjeta (T.C.)"
+          value={fmt.format(totalTarjeta)}
+          icon={<CreditCard size={18} />}
+        />
       </div>
 
       {/* Desglose */}
-      <section className="rounded-lg border border-black/10 p-5 dark:border-white/10">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-          Desglose de ingresos
-        </h2>
+      <Card className="p-5">
+        <CardTitle className="mb-3">Desglose de ingresos</CardTitle>
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs uppercase tracking-wide text-zinc-400">
+            <tr className="text-left text-xs uppercase tracking-wide text-muted">
               <th className="pb-2 font-medium">Concepto</th>
               <th className="pb-2 text-right font-medium">Efectivo</th>
               <th className="pb-2 text-right font-medium">Tarjeta</th>
               <th className="pb-2 text-right font-medium">Total</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-black/5 dark:divide-white/10">
+          <tbody className="divide-y divide-border">
             <Fila
               concepto="Servicios"
               efectivo={acc.servEfectivo}
@@ -120,7 +134,7 @@ export default async function CajaPage({
             />
           </tbody>
           <tfoot>
-            <tr className="border-t-2 border-black/10 font-semibold dark:border-white/15">
+            <tr className="border-t-2 border-border font-semibold">
               <td className="pt-2">Total</td>
               <td className="pt-2 text-right">{fmt.format(totalEfectivo)}</td>
               <td className="pt-2 text-right">{fmt.format(totalTarjeta)}</td>
@@ -129,86 +143,60 @@ export default async function CajaPage({
           </tfoot>
         </table>
 
-        <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 border-t border-black/5 pt-4 text-sm dark:border-white/10">
-          <span className="text-zinc-500">
+        <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 border-t border-border pt-4 text-sm text-muted">
+          <span>
             Comisiones del día:{" "}
-            <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+            <span className="font-semibold text-foreground">
               {fmt.format(acc.comisiones)}
             </span>
           </span>
-          <span className="text-zinc-500">
+          <span>
             Utilidad de productos:{" "}
-            <span className="font-semibold text-green-700 dark:text-green-400">
+            <span className="font-semibold text-emerald-700 dark:text-emerald-400">
               {fmt.format(acc.utilidades)}
             </span>
           </span>
         </div>
-      </section>
+      </Card>
 
       {/* Movimientos de efectivo */}
-      <section className="rounded-lg border border-black/10 p-5 dark:border-white/10">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-          Movimientos de efectivo
-        </h2>
+      <Card className="p-5">
+        <CardTitle className="mb-3">Movimientos de efectivo</CardTitle>
 
-        <form
-          action={crearMovimiento}
-          className="flex flex-wrap items-end gap-2"
-        >
+        <form action={crearMovimiento} className="flex flex-wrap items-end gap-3">
           <input type="hidden" name="fecha" value={fecha} />
-          <label className="flex flex-col gap-1">
-            <span className="text-xs text-zinc-500">Tipo</span>
-            <select
-              name="tipo"
-              className="rounded-md border border-black/10 bg-white px-2.5 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900"
-            >
+          <Field label="Tipo">
+            <Select name="tipo">
               <option value="SALIDA">Salida (gasto/retiro)</option>
               <option value="ENTRADA">Entrada (fondo/ingreso)</option>
-            </select>
-          </label>
-          <label className="flex flex-1 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Concepto</span>
-            <input
+            </Select>
+          </Field>
+          <Field label="Concepto" className="flex-1">
+            <Input
               name="concepto"
               required
               placeholder="Compra de material, retiro, etc."
-              className="rounded-md border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900"
             />
-          </label>
-          <label className="flex w-28 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Monto</span>
-            <input
-              name="monto"
-              required
-              inputMode="decimal"
-              placeholder="0.00"
-              className="rounded-md border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900"
-            />
-          </label>
-          <button className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200">
-            Agregar
-          </button>
+          </Field>
+          <Field label="Monto" className="w-28">
+            <Input name="monto" required inputMode="decimal" placeholder="0.00" />
+          </Field>
+          <Button type="submit">Agregar</Button>
         </form>
 
         {movimientos.length > 0 && (
-          <ul className="mt-4 flex flex-col divide-y divide-black/5 dark:divide-white/10">
+          <ul className="mt-4 flex flex-col divide-y divide-border">
             {movimientos.map((m) => (
               <li
                 key={m.id}
                 className="flex items-center justify-between gap-2 py-2 text-sm"
               >
                 <span className="flex items-center gap-2">
-                  <span
-                    className={`rounded px-2 py-0.5 text-xs font-medium ${
-                      m.tipo === "ENTRADA"
-                        ? "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
-                        : "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-200"
-                    }`}
-                  >
+                  <Badge tone={m.tipo === "ENTRADA" ? "success" : "danger"}>
                     {m.tipo === "ENTRADA" ? "Entrada" : "Salida"}
-                  </span>
+                  </Badge>
                   <span>{m.concepto}</span>
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-muted">
                     {fmtHora.format(m.fecha)}
                   </span>
                 </span>
@@ -216,7 +204,7 @@ export default async function CajaPage({
                   <span
                     className={
                       m.tipo === "ENTRADA"
-                        ? "font-medium text-green-700 dark:text-green-400"
+                        ? "font-medium text-emerald-700 dark:text-emerald-400"
                         : "font-medium text-red-700 dark:text-red-400"
                     }
                   >
@@ -224,7 +212,7 @@ export default async function CajaPage({
                     {fmt.format(Number(m.monto))}
                   </span>
                   <form action={eliminarMovimiento.bind(null, m.id)}>
-                    <button className="text-xs text-zinc-400 hover:text-red-600 hover:underline">
+                    <button className="text-xs text-muted hover:text-red-600 hover:underline">
                       eliminar
                     </button>
                   </form>
@@ -233,39 +221,20 @@ export default async function CajaPage({
             ))}
           </ul>
         )}
-      </section>
+      </Card>
 
       {/* Efectivo esperado en caja */}
-      <section className="rounded-lg border border-black/10 bg-black/[.02] p-5 dark:border-white/10 dark:bg-white/[.03]">
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-          Efectivo esperado en caja
-        </h2>
-        <p className="text-3xl font-semibold">{fmt.format(efectivoEnCaja)}</p>
-        <p className="mt-2 text-xs text-zinc-500">
+      <Card className="bg-surface-2 p-5">
+        <CardTitle className="mb-2">Efectivo esperado en caja</CardTitle>
+        <p className="text-3xl font-semibold tracking-tight">
+          {fmt.format(efectivoEnCaja)}
+        </p>
+        <p className="mt-2 text-xs text-muted">
           Ventas en efectivo {fmt.format(totalEfectivo)} + entradas{" "}
           {fmt.format(entradas)} − salidas {fmt.format(salidas)}. (Los cobros con
           tarjeta no cuentan como efectivo en caja.)
         </p>
-      </section>
-    </div>
-  );
-}
-
-function Tarjeta({
-  titulo,
-  valor,
-  grande = false,
-}: {
-  titulo: string;
-  valor: string;
-  grande?: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-black/10 p-5 dark:border-white/10">
-      <p className="text-sm text-zinc-500">{titulo}</p>
-      <p className={`mt-1 font-semibold ${grande ? "text-3xl" : "text-2xl"}`}>
-        {valor}
-      </p>
+      </Card>
     </div>
   );
 }

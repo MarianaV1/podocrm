@@ -6,16 +6,14 @@ import {
   toggleActivoProducto,
   eliminarProducto,
 } from "@/app/actions/productos";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 const fmtMoneda = new Intl.NumberFormat("es-MX", {
   style: "currency",
   currency: "MXN",
 });
-
-const inputCls =
-  "rounded-md border border-black/10 bg-white px-2 py-1 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900";
-const btnCls =
-  "rounded-md border border-black/10 px-3 py-1 text-xs font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10";
 
 export function ProductoItem({
   producto,
@@ -53,58 +51,44 @@ export function ProductoItem({
     return (
       <li className="px-4 py-3">
         <form action={guardar} className="flex flex-wrap items-end gap-2">
-          <label className="flex flex-1 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Nombre</span>
-            <input
-              name="nombre"
-              defaultValue={producto.nombre}
-              required
-              className={inputCls}
-            />
-          </label>
-          <label className="flex w-24 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Precio venta</span>
-            <input
+          <Field label="Nombre" className="flex-1">
+            <Input name="nombre" defaultValue={producto.nombre} required />
+          </Field>
+          <Field label="Precio venta" className="w-24">
+            <Input
               name="precioVenta"
               defaultValue={producto.precioVenta}
               inputMode="decimal"
               required
-              className={inputCls}
             />
-          </label>
-          <label className="flex w-24 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Costo</span>
-            <input
+          </Field>
+          <Field label="Costo" className="w-24">
+            <Input
               name="costo"
               defaultValue={producto.costo}
               inputMode="decimal"
-              className={inputCls}
             />
-          </label>
-          <label className="flex w-20 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Stock</span>
-            <input
+          </Field>
+          <Field label="Stock" className="w-20">
+            <Input
               name="stock"
               defaultValue={producto.stock}
               inputMode="numeric"
-              className={inputCls}
             />
-          </label>
+          </Field>
           <div className="flex gap-2">
-            <button
-              disabled={pending}
-              className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
+            <Button type="submit" size="sm" disabled={pending}>
               {pending ? "Guardando…" : "Guardar"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setEditando(false)}
               disabled={pending}
-              className={btnCls}
             >
               Cancelar
-            </button>
+            </Button>
           </div>
         </form>
       </li>
@@ -114,52 +98,39 @@ export function ProductoItem({
   return (
     <li className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
       <div className="min-w-0">
-        <p
-          className={
-            producto.activo ? "font-medium" : "text-zinc-400 line-through"
-          }
-        >
+        <p className={producto.activo ? "font-medium" : "text-muted line-through"}>
           {producto.nombre}
         </p>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-muted">
           Venta {fmtMoneda.format(producto.precioVenta)} · Costo{" "}
           {fmtMoneda.format(producto.costo)} · Utilidad{" "}
-          <span className="font-medium text-green-700 dark:text-green-400">
+          <span className="font-medium text-emerald-700 dark:text-emerald-400">
             {fmtMoneda.format(utilidad)}
           </span>
         </p>
       </div>
-      <div className="flex items-center gap-3">
-        <span
-          className={`rounded px-2 py-0.5 text-xs font-medium ${
+      <div className="flex items-center gap-2">
+        <Badge
+          tone={
             producto.stock <= 0
-              ? "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300"
+              ? "danger"
               : producto.stock <= 3
-                ? "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-200"
-                : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
-          }`}
-          title="Existencias en inventario"
+                ? "warning"
+                : "neutral"
+          }
         >
           {producto.stock} en stock
-        </span>
-        {!producto.activo && (
-          <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-            Inactivo
-          </span>
-        )}
-        <button onClick={() => setEditando(true)} className={btnCls}>
+        </Badge>
+        {!producto.activo && <Badge tone="neutral">Inactivo</Badge>}
+        <Button variant="outline" size="sm" onClick={() => setEditando(true)}>
           Editar
-        </button>
-        <button onClick={toggle} disabled={pending} className={btnCls}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={toggle} disabled={pending}>
           {producto.activo ? "Desactivar" : "Activar"}
-        </button>
-        <button
-          onClick={borrar}
-          disabled={pending}
-          className="rounded-md border border-red-300 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-60 dark:border-red-500/40 dark:text-red-300 dark:hover:bg-red-500/10"
-        >
+        </Button>
+        <Button variant="danger" size="sm" onClick={borrar} disabled={pending}>
           Eliminar
-        </button>
+        </Button>
       </div>
     </li>
   );

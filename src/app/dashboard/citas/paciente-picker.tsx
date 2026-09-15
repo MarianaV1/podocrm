@@ -1,18 +1,17 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { ClipboardList } from "lucide-react";
 import {
   buscarPacientes,
   ligarPacientePorId,
   crearPacienteYLigar,
 } from "@/app/actions/google";
+import { Button, buttonClasses } from "@/components/ui/button";
+import { Input, inputClasses } from "@/components/ui/input";
+import { cn } from "@/lib/cn";
 
 type Resultado = { id: string; nombre: string };
-
-const inputCls =
-  "rounded-md border border-black/10 bg-white px-2 py-1 text-xs outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900";
-const btnCls =
-  "rounded-md border border-black/10 px-2.5 py-1 text-xs font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10";
 
 export function PacientePicker({
   citaId,
@@ -59,15 +58,13 @@ export function PacientePicker({
           onFocus={() => query.trim() && setAbierto(true)}
           onBlur={() => setTimeout(() => setAbierto(false), 150)}
           placeholder="Buscar paciente…"
-          className={`w-44 ${inputCls}`}
+          className={cn(inputClasses, "w-44 py-1 text-xs")}
         />
         {abierto && query.trim() && (
-          <ul className="absolute z-20 mt-1 max-h-56 w-56 overflow-auto rounded-md border border-black/10 bg-white text-xs shadow-lg dark:border-white/15 dark:bg-zinc-900">
-            {buscando && (
-              <li className="px-3 py-2 text-zinc-400">Buscando…</li>
-            )}
+          <ul className="absolute z-20 mt-1 max-h-56 w-56 overflow-auto rounded-lg border border-border bg-surface text-xs shadow-lg">
+            {buscando && <li className="px-3 py-2 text-muted">Buscando…</li>}
             {!buscando && resultados.length === 0 && (
-              <li className="px-3 py-2 text-zinc-400">Sin resultados</li>
+              <li className="px-3 py-2 text-muted">Sin resultados</li>
             )}
             {resultados.map((r) => (
               <li key={r.id}>
@@ -75,7 +72,7 @@ export function PacientePicker({
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => ligar(r.id)}
                   disabled={pending}
-                  className="block w-full px-3 py-2 text-left hover:bg-black/5 disabled:opacity-60 dark:hover:bg-white/10"
+                  className="block w-full px-3 py-2 text-left hover:bg-surface-2 disabled:opacity-60"
                 >
                   {r.nombre}
                 </button>
@@ -85,7 +82,7 @@ export function PacientePicker({
         )}
       </div>
 
-      <button onClick={() => setModal(true)} className={btnCls}>
+      <button onClick={() => setModal(true)} className={buttonClasses("outline", "sm")}>
         + Crear
       </button>
 
@@ -127,7 +124,7 @@ function CrearPacienteModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-lg border border-black/10 bg-white p-5 text-sm shadow-xl dark:border-white/15 dark:bg-zinc-900"
+        className="w-full max-w-sm rounded-xl border border-border bg-surface p-5 text-sm shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-base font-semibold">Crear paciente</h3>
@@ -135,42 +132,39 @@ function CrearPacienteModal({
         <div className="mt-3 flex flex-col gap-3">
           <label className="flex flex-col gap-1">
             <span className="font-medium">Nombre</span>
-            <input
+            <Input
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               autoFocus
-              className={inputCls}
             />
           </label>
           <label className="flex flex-col gap-1">
             <span className="font-medium">Teléfono (WhatsApp)</span>
-            <input
+            <Input
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
               type="tel"
               inputMode="tel"
               placeholder="10 dígitos"
-              className={inputCls}
             />
           </label>
 
-          <p className="rounded-md border border-amber-300 bg-amber-50 p-2.5 text-xs text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
-            📋 Recuerda sacarle su <strong>hoja clínica</strong> cuando llegue —
-            entra a su ficha desde la cita.
+          <p className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-2.5 text-xs text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+            <ClipboardList size={15} className="mt-px shrink-0" />
+            <span>
+              Recuerda sacarle su <strong>hoja clínica</strong> cuando llegue —
+              entra a su ficha desde la cita.
+            </span>
           </p>
         </div>
 
         <div className="mt-4 flex justify-end gap-2">
-          <button onClick={onClose} className={btnCls}>
+          <Button variant="outline" size="sm" onClick={onClose}>
             Cancelar
-          </button>
-          <button
-            onClick={crear}
-            disabled={pending || !nombre.trim()}
-            className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-          >
+          </Button>
+          <Button size="sm" onClick={crear} disabled={pending || !nombre.trim()}>
             {pending ? "Creando…" : "Crear y ligar"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

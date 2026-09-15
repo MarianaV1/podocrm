@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
+import { Footprints } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { IS_DEMO } from "@/lib/demo";
 import { entrarDemo } from "@/app/actions/auth";
+import { buttonClasses } from "@/components/ui/button";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage({
@@ -20,23 +22,24 @@ export default async function LoginPage({
   return (
     <main className="flex flex-1 items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Footprints size={24} />
+          </span>
           <h1 className="text-2xl font-semibold tracking-tight">
             CRM Podología
           </h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Inicia sesión para continuar
-          </p>
+          <p className="mt-1 text-sm text-muted">Inicia sesión para continuar</p>
         </div>
 
         {IS_DEMO && (
-          <div className="mb-6 flex flex-col gap-3 rounded-lg border border-blue-300 bg-blue-50 p-4 dark:border-blue-500/40 dark:bg-blue-500/10">
-            <p className="text-sm text-blue-900 dark:text-blue-200">
+          <div className="mb-6 flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
+            <p className="text-sm text-foreground">
               👋 Esta es una <strong>demo</strong> con datos ficticios. Entra con
               un clic, sin registrarte.
             </p>
             <form action={entrarDemo}>
-              <button className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700">
+              <button className={buttonClasses("primary", "md", "w-full")}>
                 Entrar a la demo →
               </button>
             </form>
@@ -46,13 +49,15 @@ export default async function LoginPage({
                 invitado.
               </p>
             )}
-            <p className="text-center text-xs text-zinc-500">
+            <p className="text-center text-xs text-muted">
               o inicia sesión manualmente
             </p>
           </div>
         )}
 
-        <LoginForm />
+        <div className="rounded-xl border border-border bg-surface p-6">
+          <LoginForm />
+        </div>
       </div>
     </main>
   );

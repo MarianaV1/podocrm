@@ -1,7 +1,19 @@
 import Link from "next/link";
+import {
+  Wallet,
+  Banknote,
+  CreditCard,
+  UserCheck,
+  Users,
+  FileText,
+  ArrowRight,
+} from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { hoyMX, rangoDia, fechaLegible } from "@/lib/fecha";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatCard } from "@/components/ui/stat-card";
+import { Card } from "@/components/ui/card";
 
 const fmt = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -40,67 +52,72 @@ export default async function DashboardPage() {
   const totalHoy = efectivo + tarjeta;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Panel</h1>
-        <p className="text-sm text-zinc-500">
-          Sesión iniciada como {user?.email}
-        </p>
-      </div>
+    <div className="flex flex-col gap-8">
+      <PageHeader title="Panel" subtitle={`Sesión iniciada como ${user?.email}`} />
 
-      {/* Resumen de hoy */}
-      <section className="rounded-lg border border-black/10 p-5 dark:border-white/10">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">
             Hoy · {fechaLegible(hoy)}
           </h2>
           <Link
             href="/dashboard/caja"
-            className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
-            Ver corte de caja →
+            Ver corte de caja <ArrowRight size={15} />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <Mini titulo="Ingresos" valor={fmt.format(totalHoy)} />
-          <Mini titulo="Efectivo" valor={fmt.format(efectivo)} />
-          <Mini titulo="Tarjeta" valor={fmt.format(tarjeta)} />
-          <Mini titulo="Pacientes atendidos" valor={String(atendidosHoy)} />
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatCard
+            label="Ingresos"
+            value={fmt.format(totalHoy)}
+            icon={<Wallet size={18} />}
+          />
+          <StatCard
+            label="Efectivo"
+            value={fmt.format(efectivo)}
+            icon={<Banknote size={18} />}
+          />
+          <StatCard
+            label="Tarjeta"
+            value={fmt.format(tarjeta)}
+            icon={<CreditCard size={18} />}
+          />
+          <StatCard
+            label="Atendidos"
+            value={String(atendidosHoy)}
+            icon={<UserCheck size={18} />}
+          />
         </div>
       </section>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Link
-          href="/dashboard/pacientes"
-          className="rounded-lg border border-black/10 p-5 transition-colors hover:bg-black/[.02] dark:border-white/10 dark:hover:bg-white/[.03]"
-        >
-          <p className="text-sm text-zinc-500">Pacientes</p>
-          <p className="mt-1 text-3xl font-semibold">{totalPacientes}</p>
-          <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
-            Ver pacientes →
-          </p>
+        <Link href="/dashboard/pacientes" className="group">
+          <Card className="p-5 transition-colors group-hover:border-primary/40">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted">Pacientes</p>
+              <Users size={18} className="text-muted" />
+            </div>
+            <p className="mt-1 text-3xl font-semibold">{totalPacientes}</p>
+            <p className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary">
+              Ver pacientes <ArrowRight size={15} />
+            </p>
+          </Card>
         </Link>
 
-        <Link
-          href="/dashboard/reporte-salud"
-          className="rounded-lg border border-black/10 p-5 transition-colors hover:bg-black/[.02] dark:border-white/10 dark:hover:bg-white/[.03]"
-        >
-          <p className="text-sm text-zinc-500">Reporte</p>
-          <p className="mt-1 text-lg font-semibold">Secretaría de Salud</p>
-          <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
-            Ver reporte →
-          </p>
+        <Link href="/dashboard/reporte-salud" className="group">
+          <Card className="p-5 transition-colors group-hover:border-primary/40">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted">Reporte</p>
+              <FileText size={18} className="text-muted" />
+            </div>
+            <p className="mt-1 text-lg font-semibold">Secretaría de Salud</p>
+            <p className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary">
+              Ver reporte <ArrowRight size={15} />
+            </p>
+          </Card>
         </Link>
       </div>
-    </div>
-  );
-}
-
-function Mini({ titulo, valor }: { titulo: string; valor: string }) {
-  return (
-    <div>
-      <p className="text-xs uppercase tracking-wide text-zinc-400">{titulo}</p>
-      <p className="mt-0.5 text-xl font-semibold">{valor}</p>
     </div>
   );
 }

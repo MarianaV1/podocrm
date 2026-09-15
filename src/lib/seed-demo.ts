@@ -142,16 +142,19 @@ export async function sembrarDemo(prisma: PrismaClient) {
     min: number;
     estado: "LLEGO" | "LLEGO_TARDE" | "AGENDADA" | "NO_SHOW";
   }[] = [
+    // Hoy (con cobro → alimenta el corte de caja y el panel).
     { p: 0, pod: 0, dias: 0, hora: 10, min: 0, estado: "LLEGO" },
     { p: 1, pod: 1, dias: 0, hora: 11, min: 30, estado: "LLEGO" },
-    { p: 2, pod: 2, dias: 0, hora: 13, min: 0, estado: "LLEGO_TARDE" },
-    { p: 3, pod: 0, dias: 0, hora: 16, min: 0, estado: "AGENDADA" },
-    { p: 4, pod: 1, dias: 1, hora: 12, min: 0, estado: "LLEGO" },
-    { p: 5, pod: 2, dias: 1, hora: 17, min: 0, estado: "LLEGO" },
-    { p: 6, pod: 0, dias: 2, hora: 10, min: 30, estado: "NO_SHOW" },
-    { p: 7, pod: 1, dias: 2, hora: 15, min: 0, estado: "LLEGO" },
-    { p: 0, pod: 2, dias: 3, hora: 11, min: 0, estado: "LLEGO" },
-    { p: 1, pod: 0, dias: 5, hora: 18, min: 0, estado: "LLEGO_TARDE" },
+    { p: 6, pod: 2, dias: 0, hora: 13, min: 0, estado: "AGENDADA" },
+    // Próximas (días futuros, aún AGENDADA).
+    { p: 2, pod: 0, dias: -1, hora: 11, min: 0, estado: "AGENDADA" },
+    { p: 3, pod: 1, dias: -1, hora: 16, min: 30, estado: "AGENDADA" },
+    { p: 4, pod: 2, dias: -3, hora: 12, min: 0, estado: "AGENDADA" },
+    { p: 5, pod: 0, dias: -6, hora: 10, min: 0, estado: "AGENDADA" },
+    // Anteriores (historial atendido).
+    { p: 7, pod: 1, dias: 1, hora: 15, min: 0, estado: "LLEGO" },
+    { p: 0, pod: 2, dias: 2, hora: 11, min: 0, estado: "LLEGO_TARDE" },
+    { p: 1, pod: 0, dias: 3, hora: 18, min: 0, estado: "NO_SHOW" },
   ];
 
   const citas = [];

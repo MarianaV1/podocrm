@@ -2,16 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { editarPodologa, toggleActivaPodologa } from "@/app/actions/podologas";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 const fmtMoneda = new Intl.NumberFormat("es-MX", {
   style: "currency",
   currency: "MXN",
 });
-
-const inputCls =
-  "rounded-md border border-black/10 bg-white px-2 py-1 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900";
-const btnCls =
-  "rounded-md border border-black/10 px-3 py-1 text-xs font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10";
 
 export function PodologaItem({
   podologa,
@@ -45,91 +43,86 @@ export function PodologaItem({
       <div className="flex flex-wrap items-center justify-between gap-2">
         {editando ? (
           <form action={guardar} className="flex flex-wrap items-end gap-2">
-            <label className="flex flex-col gap-1">
-              <span className="text-xs text-zinc-500">Nombre</span>
-              <input
-                name="nombre"
-                defaultValue={podologa.nombre}
-                required
-                className={inputCls}
-              />
-            </label>
-            <label className="flex w-24 flex-col gap-1">
-              <span className="text-xs text-zinc-500">Comisión %</span>
-              <input
+            <Field label="Nombre">
+              <Input name="nombre" defaultValue={podologa.nombre} required />
+            </Field>
+            <Field label="Comisión %" className="w-24">
+              <Input
                 name="comisionPct"
                 defaultValue={podologa.comisionPct}
                 inputMode="numeric"
-                className={inputCls}
               />
-            </label>
-            <button
-              disabled={pending}
-              className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
+            </Field>
+            <Button type="submit" size="sm" disabled={pending}>
               {pending ? "Guardando…" : "Guardar"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setEditando(false)}
               disabled={pending}
-              className={btnCls}
             >
               Cancelar
-            </button>
+            </Button>
           </form>
         ) : (
           <>
             <div className="min-w-0">
               <span
                 className={
-                  podologa.activa ? "font-medium" : "text-zinc-400 line-through"
+                  podologa.activa ? "font-medium" : "text-muted line-through"
                 }
               >
                 {podologa.nombre}
               </span>
-              <span className="ml-2 rounded bg-black/5 px-1.5 py-0.5 text-xs text-zinc-600 dark:bg-white/10 dark:text-zinc-300">
-                comisión {podologa.comisionPct}%
-              </span>
+              <Badge tone="primary" className="ml-2">
+                {podologa.comisionPct}%
+              </Badge>
             </div>
-            <div className="flex items-center gap-3">
-              {!podologa.activa && (
-                <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                  Inactiva
-                </span>
-              )}
-              <button onClick={() => setEditando(true)} className={btnCls}>
+            <div className="flex items-center gap-2">
+              {!podologa.activa && <Badge tone="neutral">Inactiva</Badge>}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setEditando(true)}
+              >
                 Editar
-              </button>
-              <button onClick={toggle} disabled={pending} className={btnCls}>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggle}
+                disabled={pending}
+              >
                 {podologa.activa ? "Desactivar" : "Activar"}
-              </button>
+              </Button>
             </div>
           </>
         )}
       </div>
 
       {/* Totales de comisión (como el Excel: efectivo / T.C. / total) */}
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
         <span>
           Comisión efectivo:{" "}
-          <span className="font-medium text-zinc-700 dark:text-zinc-300">
+          <span className="font-medium text-foreground">
             {fmtMoneda.format(comisiones.efectivo)}
           </span>
         </span>
         <span>
           Comisión T.C.:{" "}
-          <span className="font-medium text-zinc-700 dark:text-zinc-300">
+          <span className="font-medium text-foreground">
             {fmtMoneda.format(comisiones.tarjeta)}
           </span>
         </span>
         <span>
           Total:{" "}
-          <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+          <span className="font-semibold text-foreground">
             {fmtMoneda.format(total)}
           </span>
         </span>
-        <span className="text-zinc-400">
+        <span>
           {comisiones.pagos} pago{comisiones.pagos === 1 ? "" : "s"}
         </span>
       </div>

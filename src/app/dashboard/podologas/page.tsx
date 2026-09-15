@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { crearPodologa } from "@/app/actions/podologas";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PodologaItem } from "./podologa-item";
 
 export default async function PodologasPage() {
@@ -35,47 +39,29 @@ export default async function PodologasPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Podólogas</h1>
-        <p className="text-sm text-zinc-500">
-          Cada podóloga tiene un % de comisión fijo que se aplica a lo que cobra.
-        </p>
-      </div>
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+      <PageHeader
+        title="Podólogas"
+        subtitle="Cada podóloga tiene un % de comisión fijo que se aplica a lo que cobra."
+      />
 
       <form
         action={crearPodologa}
-        className="flex flex-wrap items-end gap-2 rounded-lg border border-black/10 p-4 dark:border-white/10"
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
       >
-        <label className="flex flex-1 flex-col gap-1">
-          <span className="text-xs text-zinc-500">Nombre</span>
-          <input
-            name="nombre"
-            required
-            placeholder="Nombre de la podóloga"
-            className="rounded-md border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900"
-          />
-        </label>
-        <label className="flex w-28 flex-col gap-1">
-          <span className="text-xs text-zinc-500">Comisión %</span>
-          <input
-            name="comisionPct"
-            inputMode="numeric"
-            defaultValue={30}
-            className="rounded-md border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900"
-          />
-        </label>
-        <button className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200">
-          Agregar
-        </button>
+        <Field label="Nombre" className="flex-1">
+          <Input name="nombre" required placeholder="Nombre de la podóloga" />
+        </Field>
+        <Field label="Comisión %" className="w-28">
+          <Input name="comisionPct" inputMode="numeric" defaultValue={30} />
+        </Field>
+        <Button type="submit">Agregar</Button>
       </form>
 
       {podologas.length === 0 ? (
-        <p className="rounded-md border border-dashed border-black/15 p-8 text-center text-sm text-zinc-500 dark:border-white/15">
-          Aún no hay podólogas. Agrega la primera arriba.
-        </p>
+        <EmptyState>Aún no hay podólogas. Agrega la primera arriba.</EmptyState>
       ) : (
-        <ul className="flex flex-col divide-y divide-black/5 rounded-lg border border-black/10 dark:divide-white/10 dark:border-white/10">
+        <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface">
           {podologas.map((p) => (
             <PodologaItem
               key={p.id}

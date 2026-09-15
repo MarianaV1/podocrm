@@ -6,16 +6,14 @@ import {
   toggleActivoServicio,
   eliminarServicio,
 } from "@/app/actions/servicios";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 const fmtMoneda = new Intl.NumberFormat("es-MX", {
   style: "currency",
   currency: "MXN",
 });
-
-const inputCls =
-  "rounded-md border border-black/10 bg-white px-2 py-1 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900";
-const btnCls =
-  "rounded-md border border-black/10 px-3 py-1 text-xs font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10";
 
 export function ServicioItem({
   servicio,
@@ -45,40 +43,30 @@ export function ServicioItem({
     return (
       <li className="px-4 py-3">
         <form action={guardar} className="flex flex-wrap items-end gap-2">
-          <label className="flex flex-1 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Nombre</span>
-            <input
-              name="nombre"
-              defaultValue={servicio.nombre}
-              required
-              className={inputCls}
-            />
-          </label>
-          <label className="flex w-28 flex-col gap-1">
-            <span className="text-xs text-zinc-500">Precio</span>
-            <input
+          <Field label="Nombre" className="flex-1">
+            <Input name="nombre" defaultValue={servicio.nombre} required />
+          </Field>
+          <Field label="Precio" className="w-28">
+            <Input
               name="precio"
               defaultValue={servicio.precio}
               inputMode="decimal"
               required
-              className={inputCls}
             />
-          </label>
+          </Field>
           <div className="flex gap-2">
-            <button
-              disabled={pending}
-              className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
+            <Button type="submit" size="sm" disabled={pending}>
               {pending ? "Guardando…" : "Guardar"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setEditando(false)}
               disabled={pending}
-              className={btnCls}
             >
               Cancelar
-            </button>
+            </Button>
           </div>
         </form>
       </li>
@@ -88,36 +76,22 @@ export function ServicioItem({
   return (
     <li className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
       <div className="min-w-0">
-        <p
-          className={
-            servicio.activo ? "font-medium" : "text-zinc-400 line-through"
-          }
-        >
+        <p className={servicio.activo ? "font-medium" : "text-muted line-through"}>
           {servicio.nombre}
         </p>
-        <p className="text-xs text-zinc-500">
-          {fmtMoneda.format(servicio.precio)}
-        </p>
+        <p className="text-xs text-muted">{fmtMoneda.format(servicio.precio)}</p>
       </div>
-      <div className="flex items-center gap-3">
-        {!servicio.activo && (
-          <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-            Inactivo
-          </span>
-        )}
-        <button onClick={() => setEditando(true)} className={btnCls}>
+      <div className="flex items-center gap-2">
+        {!servicio.activo && <Badge tone="neutral">Inactivo</Badge>}
+        <Button variant="outline" size="sm" onClick={() => setEditando(true)}>
           Editar
-        </button>
-        <button onClick={toggle} disabled={pending} className={btnCls}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={toggle} disabled={pending}>
           {servicio.activo ? "Desactivar" : "Activar"}
-        </button>
-        <button
-          onClick={borrar}
-          disabled={pending}
-          className="rounded-md border border-red-300 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-60 dark:border-red-500/40 dark:text-red-300 dark:hover:bg-red-500/10"
-        >
+        </Button>
+        <Button variant="danger" size="sm" onClick={borrar} disabled={pending}>
           Eliminar
-        </button>
+        </Button>
       </div>
     </li>
   );

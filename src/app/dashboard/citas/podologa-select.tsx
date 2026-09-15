@@ -23,7 +23,7 @@ export function PodologaSelect({
       onChange={(e) =>
         startTransition(() => asignarPodologa(citaId, e.target.value))
       }
-      className="rounded-md border border-black/10 bg-white px-2 py-1 text-xs outline-none disabled:opacity-60 dark:border-white/15 dark:bg-zinc-900"
+      className="rounded-lg border border-border bg-surface px-2 py-1 text-xs text-foreground outline-none transition-colors focus:border-primary disabled:opacity-60"
     >
       <option value="">— Podóloga —</option>
       {podologas.map((p) => (

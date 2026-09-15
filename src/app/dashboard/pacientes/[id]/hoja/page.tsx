@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { HojaForm } from "./hoja-form";
 
@@ -20,15 +21,15 @@ export default async function HojaPage({
       <div>
         <Link
           href={`/dashboard/pacientes/${paciente.id}`}
-          className="text-sm text-zinc-500 hover:underline"
+          className="inline-flex items-center gap-1 text-sm text-muted hover:text-foreground"
         >
-          ← {paciente.nombre}
+          <ArrowLeft size={15} /> {paciente.nombre}
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">
           {paciente.hojaClinica ? "Editar hoja clínica" : "Nueva hoja clínica"}
         </h1>
         {paciente.hojaClinica && (
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted">
             Folio {paciente.hojaClinica.folio}
           </p>
         )}

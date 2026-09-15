@@ -1,28 +1,53 @@
 @import "tailwindcss";
 
+/* El modo oscuro se controla por atributo data-theme en <html> (permite el
+   toggle), no por media query. Un script en el layout lo fija antes del paint. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ─── Tokens de diseño ─────────────────────────────────────────────
+   Un solo acento (teal médico). Superficies planas + borde sutil. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f7f8;
+  --surface: #ffffff;
+  --surface-2: #eef0f2;
+  --foreground: #18181b;
+  --muted: #6b7280;
+  --border: rgba(9, 9, 11, 0.08);
+  --primary: #0d9488;
+  --primary-hover: #0f766e;
+  --primary-foreground: #ffffff;
+}
+
+[data-theme="dark"] {
+  --background: #0a0b0d;
+  --surface: #16181d;
+  --surface-2: #21242b;
+  --foreground: #e8e8ea;
+  --muted: #9aa1ab;
+  --border: rgba(255, 255, 255, 0.1);
+  --primary: #2dd4bf;
+  --primary-hover: #5eead4;
+  --primary-foreground: #042a24;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
 
 @media print {

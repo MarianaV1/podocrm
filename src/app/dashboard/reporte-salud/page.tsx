@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { hoyMX, inicioDeMesMX, rangoFechas, fechaLegible } from "@/lib/fecha";
 import { PrintButton } from "@/components/print-button";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const fmtFecha = new Intl.DateTimeFormat("es-MX", {
   day: "2-digit",
@@ -13,9 +17,6 @@ const fmtHora = new Intl.DateTimeFormat("es-MX", {
   minute: "2-digit",
   timeZone: "America/Mexico_City",
 });
-
-const inputCls =
-  "rounded-md border border-black/10 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900";
 
 export default async function ReporteSaludPage({
   searchParams,
@@ -42,33 +43,25 @@ export default async function ReporteSaludPage({
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <div className="no-print flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Reporte Secretaría de Salud
-          </h1>
-          <p className="text-sm text-zinc-500">
-            Pacientes que asistieron, con fecha, hora y podóloga.
-          </p>
-        </div>
-        <PrintButton label="Imprimir / Guardar PDF" />
+      <div className="no-print">
+        <PageHeader
+          title="Reporte Secretaría de Salud"
+          subtitle="Pacientes que asistieron, con fecha, hora y podóloga."
+          actions={<PrintButton label="Imprimir / Guardar PDF" />}
+        />
       </div>
 
       <form
         method="get"
-        className="no-print flex flex-wrap items-end gap-2 rounded-lg border border-black/10 p-4 dark:border-white/10"
+        className="no-print flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
       >
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-zinc-500">Desde</span>
-          <input type="date" name="desde" defaultValue={desde} className={inputCls} />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-zinc-500">Hasta</span>
-          <input type="date" name="hasta" defaultValue={hasta} className={inputCls} />
-        </label>
-        <button className="rounded-md bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200">
-          Ver
-        </button>
+        <Field label="Desde">
+          <Input type="date" name="desde" defaultValue={desde} />
+        </Field>
+        <Field label="Hasta">
+          <Input type="date" name="hasta" defaultValue={hasta} />
+        </Field>
+        <Button type="submit">Ver</Button>
       </form>
 
       {/* Encabezado imprimible */}
@@ -79,47 +72,49 @@ export default async function ReporteSaludPage({
         </p>
       </div>
 
-      <section>
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+      <section className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">
             Pacientes atendidos
           </h2>
-          <span className="text-sm text-zinc-500">{citas.length} en total</span>
+          <span className="text-sm text-muted">{citas.length} en total</span>
         </div>
 
         {citas.length === 0 ? (
-          <p className="rounded-md border border-dashed border-black/15 p-8 text-center text-sm text-zinc-500 dark:border-white/15">
+          <EmptyState>
             No hay pacientes atendidos en este rango. Marca “Llegó” en las citas
             para que aparezcan aquí.
-          </p>
+          </EmptyState>
         ) : (
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-black/15 text-left text-xs uppercase tracking-wide text-zinc-500 dark:border-white/15">
-                <th className="py-2 pr-2 font-medium">#</th>
-                <th className="py-2 pr-2 font-medium">Paciente</th>
-                <th className="py-2 pr-2 font-medium">Fecha</th>
-                <th className="py-2 pr-2 font-medium">Hora</th>
-                <th className="py-2 font-medium">Podóloga</th>
-              </tr>
-            </thead>
-            <tbody>
-              {citas.map((c, i) => (
-                <tr
-                  key={c.id}
-                  className="border-b border-black/5 dark:border-white/10"
-                >
-                  <td className="py-2 pr-2 text-zinc-400">{i + 1}</td>
-                  <td className="py-2 pr-2">
-                    {c.paciente?.nombre ?? c.titulo}
-                  </td>
-                  <td className="py-2 pr-2">{fmtFecha.format(c.inicio)}</td>
-                  <td className="py-2 pr-2">{fmtHora.format(c.inicio)}</td>
-                  <td className="py-2">{c.podologa?.nombre ?? "—"}</td>
+          <div className="overflow-x-auto rounded-xl border border-border bg-surface print:border-0">
+            <table className="w-full text-left text-sm">
+              <thead className="border-b border-border bg-surface-2 text-xs uppercase tracking-wide text-muted">
+                <tr>
+                  <th className="px-4 py-3 font-medium">#</th>
+                  <th className="px-4 py-3 font-medium">Paciente</th>
+                  <th className="px-4 py-3 font-medium">Fecha</th>
+                  <th className="px-4 py-3 font-medium">Hora</th>
+                  <th className="px-4 py-3 font-medium">Podóloga</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {citas.map((c, i) => (
+                  <tr
+                    key={c.id}
+                    className="border-b border-border/60 last:border-0"
+                  >
+                    <td className="px-4 py-2.5 text-muted">{i + 1}</td>
+                    <td className="px-4 py-2.5">
+                      {c.paciente?.nombre ?? c.titulo}
+                    </td>
+                    <td className="px-4 py-2.5">{fmtFecha.format(c.inicio)}</td>
+                    <td className="px-4 py-2.5">{fmtHora.format(c.inicio)}</td>
+                    <td className="px-4 py-2.5">{c.podologa?.nombre ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
     </div>

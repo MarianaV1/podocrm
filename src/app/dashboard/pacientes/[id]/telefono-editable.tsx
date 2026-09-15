@@ -2,11 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { actualizarTelefono } from "@/app/actions/pacientes";
-
-const inputCls =
-  "rounded-md border border-black/10 bg-white px-2 py-1 text-sm outline-none focus:border-black/40 dark:border-white/15 dark:bg-zinc-900";
-const btnCls =
-  "rounded-md border border-black/10 px-2.5 py-1 text-xs font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function TelefonoEditable({
   pacienteId,
@@ -34,12 +31,10 @@ export function TelefonoEditable({
   if (!editando) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-zinc-800 dark:text-zinc-200">
-          {telefono ?? "—"}
-        </span>
+        <span>{telefono ?? "—"}</span>
         <button
           onClick={() => setEditando(true)}
-          className="text-xs text-blue-600 hover:underline dark:text-blue-400"
+          className="text-xs font-medium text-primary hover:underline"
         >
           {telefono ? "Editar" : "+ Agregar"}
         </button>
@@ -49,29 +44,25 @@ export function TelefonoEditable({
 
   return (
     <div className="flex items-center gap-2">
-      <input
+      <Input
         value={valor}
         onChange={(e) => setValor(e.target.value)}
         type="tel"
         inputMode="tel"
         placeholder="10 dígitos"
         autoFocus
+        className="w-40"
         onKeyDown={(e) => {
           if (e.key === "Enter") guardar();
           if (e.key === "Escape") cancelar();
         }}
-        className={inputCls}
       />
-      <button
-        onClick={guardar}
-        disabled={pending}
-        className="rounded-md bg-zinc-900 px-2.5 py-1 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-      >
+      <Button size="sm" onClick={guardar} disabled={pending}>
         {pending ? "Guardando…" : "Guardar"}
-      </button>
-      <button onClick={cancelar} disabled={pending} className={btnCls}>
+      </Button>
+      <Button variant="outline" size="sm" onClick={cancelar} disabled={pending}>
         Cancelar
-      </button>
+      </Button>
     </div>
   );
 }
