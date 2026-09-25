@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TourBoton } from "@/components/tour/tour-boton";
 import { cn } from "@/lib/cn";
 
 type Item = { href: string; label: string; icon: ComponentType<{ size?: number }> };
@@ -101,6 +102,7 @@ function Footer({ email }: { email: string }) {
       <p className="truncate px-2 text-xs text-muted" title={email}>
         {email}
       </p>
+      <TourBoton />
       <div className="flex items-center justify-between gap-2">
         <ThemeToggle />
         <form action={logout}>
@@ -119,7 +121,7 @@ export function DesktopSidebar({ email }: { email: string }) {
     <aside className="no-print hidden w-60 shrink-0 border-r border-border bg-surface md:block">
       <div className="sticky top-0 flex h-screen flex-col gap-6 p-4">
         <Brand />
-        <div className="flex-1 overflow-y-auto">
+        <div data-tour="nav" className="flex-1 overflow-y-auto">
           <NavList />
         </div>
         <Footer email={email} />
@@ -137,6 +139,7 @@ export function MobileNav({ email }: { email: string }) {
         <button
           onClick={() => setOpen(true)}
           aria-label="Abrir menú"
+          data-tour="nav"
           className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-foreground"
         >
           <Menu size={20} />

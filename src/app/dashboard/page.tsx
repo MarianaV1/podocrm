@@ -55,7 +55,7 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-8">
       <PageHeader title="Panel" subtitle={`Sesión iniciada como ${user?.email}`} />
 
-      <section className="flex flex-col gap-4">
+      <section data-tour="resumen-hoy" className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">
             Hoy · {fechaLegible(hoy)}
@@ -87,6 +87,8 @@ export default async function DashboardPage() {
             label="Atendidos"
             value={String(atendidosHoy)}
             icon={<UserCheck size={18} />}
+            info="Citas de hoy marcadas como “Llegó” o “Llegó tarde”."
+            infoAlign="end"
           />
         </div>
       </section>

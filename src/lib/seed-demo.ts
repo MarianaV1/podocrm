@@ -176,6 +176,20 @@ export async function sembrarDemo(prisma: PrismaClient) {
     citas.push({ cita, plan: c });
   }
 
+  // Cita con el nombre mal escrito y sin ligar: muestra la sugerencia
+  // "¿Es Carlos Sánchez? Ligar" (así llegan a veces desde el calendario).
+  const inicioSinLigar = dia(0, 17, 0);
+  await prisma.cita.create({
+    data: {
+      googleEventId: `demo-evt-${evt++}`,
+      titulo: "Carlos Sanches - revisión",
+      inicio: inicioSinLigar,
+      fin: new Date(inicioSinLigar.getTime() + 45 * 60 * 1000),
+      estado: "AGENDADA",
+      podologaId: lucero.id,
+    },
+  });
+
   // 7) Pagos por los servicios de las citas que llegaron.
   const servicios = [consulta, unas, reflexo, curacion];
   let si = 0;
@@ -245,6 +259,6 @@ export async function sembrarDemo(prisma: PrismaClient) {
     servicios: servicios.length,
     productos: 3,
     pacientes: pacientes.length,
-    citas: citas.length,
+    citas: citas.length + 1,
   };
 }

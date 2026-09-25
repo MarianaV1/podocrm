@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
+import { InfoTip } from "@/components/ui/info-tip";
 
 const fmtFecha = new Intl.DateTimeFormat("es-MX", {
   day: "2-digit",
@@ -43,7 +44,7 @@ export default async function ReporteSaludPage({
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <div className="no-print">
+      <div data-tour="reporte" className="no-print">
         <PageHeader
           title="Reporte Secretaría de Salud"
           subtitle="Pacientes que asistieron, con fecha, hora y podóloga."
@@ -74,8 +75,12 @@ export default async function ReporteSaludPage({
 
       <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">
+          <h2 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
             Pacientes atendidos
+            <InfoTip
+              texto="Solo cuenta citas marcadas como “Llegó” o “Llegó tarde”. Las que quedaron en “No vino” no aparecen."
+              className="no-print"
+            />
           </h2>
           <span className="text-sm text-muted">{citas.length} en total</span>
         </div>

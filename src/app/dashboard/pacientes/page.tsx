@@ -129,7 +129,7 @@ function SaludCelda({ hoja }: { hoja: HojaResumen }) {
     return <span className="text-xs text-muted">—</span>;
   }
   return (
-    <span className="group relative inline-block">
+    <span data-tour="salud-alerta" className="group relative inline-block">
       <Badge tone="danger" className="cursor-default">
         <TriangleAlert size={13} /> {alertas.length}
       </Badge>

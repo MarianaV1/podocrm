@@ -73,7 +73,7 @@ export default async function PacientePage({
         </div>
       </Card>
 
-      <Card className="p-5">
+      <Card data-tour="hoja-clinica" className="p-5">
         <div className="mb-4 flex items-center justify-between">
           <CardTitle>Hoja clínica</CardTitle>
           <div className="flex items-center gap-4">

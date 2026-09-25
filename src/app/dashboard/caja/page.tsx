@@ -9,6 +9,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { InfoTip } from "@/components/ui/info-tip";
 import { SelectorDia } from "./selector-dia";
 
 const fmt = new Intl.NumberFormat("es-MX", {
@@ -91,7 +92,10 @@ export default async function CajaPage({
       <SelectorDia fecha={fecha} hoy={hoy} />
 
       {/* Totales principales */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div
+        data-tour="caja-totales"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+      >
         <StatCard
           label="Total del día"
           value={fmt.format(totalGeneral)}
@@ -144,24 +148,38 @@ export default async function CajaPage({
         </table>
 
         <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 border-t border-border pt-4 text-sm text-muted">
-          <span>
-            Comisiones del día:{" "}
+          <span className="inline-flex flex-wrap items-center gap-1.5">
+            Comisiones del día:
             <span className="font-semibold text-foreground">
               {fmt.format(acc.comisiones)}
             </span>
+            <InfoTip
+              texto="Lo que ganan las podólogas: su % fijo sobre cada servicio cobrado. Los productos no generan comisión."
+              align="end"
+            />
           </span>
-          <span>
-            Utilidad de productos:{" "}
+          <span className="inline-flex flex-wrap items-center gap-1.5">
+            Utilidad de productos:
             <span className="font-semibold text-emerald-700 dark:text-emerald-400">
               {fmt.format(acc.utilidades)}
             </span>
+            <InfoTip
+              texto="Precio de venta menos costo de cada producto vendido."
+              align="end"
+            />
           </span>
         </div>
       </Card>
 
       {/* Movimientos de efectivo */}
       <Card className="p-5">
-        <CardTitle className="mb-3">Movimientos de efectivo</CardTitle>
+        <CardTitle className="mb-3 flex items-center gap-1.5">
+          Movimientos de efectivo
+          <InfoTip
+            texto="Dinero que entra o sale de la caja sin ser una venta: fondo inicial, compra de material, retiros."
+            align="center"
+          />
+        </CardTitle>
 
         <form action={crearMovimiento} className="flex flex-wrap items-end gap-3">
           <input type="hidden" name="fecha" value={fecha} />
@@ -224,8 +242,14 @@ export default async function CajaPage({
       </Card>
 
       {/* Efectivo esperado en caja */}
-      <Card className="bg-surface-2 p-5">
-        <CardTitle className="mb-2">Efectivo esperado en caja</CardTitle>
+      <Card data-tour="caja-esperado" className="bg-surface-2 p-5">
+        <CardTitle className="mb-2 flex items-center gap-1.5">
+          Efectivo esperado en caja
+          <InfoTip
+            texto="Lo que debería haber físicamente en la caja. Si al contar no cuadra, revisa cobros o movimientos sin registrar."
+            align="center"
+          />
+        </CardTitle>
         <p className="text-3xl font-semibold tracking-tight">
           {fmt.format(efectivoEnCaja)}
         </p>

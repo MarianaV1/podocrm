@@ -158,6 +158,11 @@ export default async function CitasPage({
     stock: p.stock,
   }));
 
+  // Cita que resalta el recorrido guiado: la primera por atender con paciente.
+  const destacadaId = (
+    citas.find((c) => c.estado === "AGENDADA" && c.paciente) ?? citas[0]
+  )?.id;
+
   // Agrupar por semana → día (para que se lea ordenado con muchas citas).
   const hoyKey = hoyMX();
   type Dia = { key: string; citas: CitaConDatos[] };
@@ -313,6 +318,7 @@ export default async function CitasPage({
                         <CitaCard
                           key={cita.id}
                           cita={cita}
+                          destacada={cita.id === destacadaId}
                           sugerencia={
                             cita.paciente
                               ? null
@@ -337,26 +343,34 @@ export default async function CitasPage({
 
 function CitaCard({
   cita,
+  destacada,
   sugerencia,
   servicios,
   productos,
   podologas,
 }: {
   cita: CitaConDatos;
+  destacada: boolean;
   sugerencia: { id: string; nombre: string } | null;
   servicios: Servicio[];
   productos: Producto[];
   podologas: Podologa[];
 }) {
+  // Anclas del recorrido guiado (solo en la cita destacada).
+  const tour = (nombre: string) => (destacada ? nombre : undefined);
+
   return (
-    <Card className="p-4">
+    <Card data-tour={tour("cita")} className="p-4">
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
           <p className="font-medium">{cita.titulo}</p>
           <p className="text-sm text-muted">{fmtFechaHora.format(cita.inicio)}</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div
+          data-tour={tour("cita-estado")}
+          className="flex flex-wrap items-center gap-2"
+        >
           <EstadoBadge estado={cita.estado} />
           {cita.estado === "AGENDADA" ? (
             <>
@@ -391,7 +405,10 @@ function CitaCard({
       </div>
 
       {/* Paciente + Podóloga */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-3 text-sm">
+      <div
+        data-tour={tour("cita-paciente")}
+        className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-3 text-sm"
+      >
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-muted">Paciente:</span>
           {cita.paciente ? (
@@ -409,7 +426,10 @@ function CitaCard({
               </form>
             </>
           ) : (
-            <div className="flex flex-wrap items-center gap-2">
+            <div
+              data-tour={sugerencia ? "cita-sugerencia" : undefined}
+              className="flex flex-wrap items-center gap-2"
+            >
               {sugerencia && (
                 <form action={ligarPaciente.bind(null, cita.id)}>
                   <input type="hidden" name="pacienteId" value={sugerencia.id} />
@@ -440,13 +460,15 @@ function CitaCard({
       <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm text-muted">Pagos ({cita.pagos.length})</span>
-          <PagoBoton
-            citaId={cita.id}
-            podologaId={cita.podologaId}
-            servicios={servicios}
-            productos={productos}
-            podologas={podologas}
-          />
+          <div data-tour={tour("cita-pago")}>
+            <PagoBoton
+              citaId={cita.id}
+              podologaId={cita.podologaId}
+              servicios={servicios}
+              productos={productos}
+              podologas={podologas}
+            />
+          </div>
         </div>
         {cita.pagos.length > 0 && (
           <ul className="flex flex-col gap-1.5">
