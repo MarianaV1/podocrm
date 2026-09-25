@@ -44,7 +44,7 @@ export function ServicioItem({
       <li className="px-4 py-3">
         <form action={guardar} className="flex flex-wrap items-end gap-2">
           <Field label="Nombre" className="flex-1">
-            <Input name="nombre" defaultValue={servicio.nombre} required />
+            <Input name="nombre" maxLength={80} defaultValue={servicio.nombre} required />
           </Field>
           <Field label="Precio" className="w-28">
             <Input

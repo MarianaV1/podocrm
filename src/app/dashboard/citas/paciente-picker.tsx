@@ -58,6 +58,7 @@ export function PacientePicker({
           onFocus={() => query.trim() && setAbierto(true)}
           onBlur={() => setTimeout(() => setAbierto(false), 150)}
           placeholder="Buscar paciente…"
+          maxLength={80}
           className={cn(inputClasses, "w-44 py-1 text-xs")}
         />
         {abierto && query.trim() && (
@@ -135,6 +136,7 @@ function CrearPacienteModal({
             <Input
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
+              maxLength={80}
               autoFocus
             />
           </label>
@@ -143,6 +145,7 @@ function CrearPacienteModal({
             <Input
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
+              maxLength={20}
               type="tel"
               inputMode="tel"
               placeholder="10 dígitos"

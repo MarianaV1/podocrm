@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { EstadoCita } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sugerirPorNombre } from "@/lib/busqueda-pacientes";
+import { LIMITES, leerTexto, leerTextoOpcional } from "@/lib/validacion";
 import { createClient } from "@/lib/supabase/server";
 import { getAuthedClient, listarEventos } from "@/lib/google";
 import { coincidenciaExacta } from "@/lib/matching";
@@ -150,7 +151,7 @@ export async function buscarPacientes(
   query: string
 ): Promise<{ id: string; nombre: string }[]> {
   await requireUserId();
-  return sugerirPorNombre(query.slice(0, 80));
+  return sugerirPorNombre(leerTexto(query, LIMITES.nombre));
 }
 
 // Liga una cita a un paciente ya existente (por id).
@@ -170,10 +171,10 @@ export async function crearPacienteYLigar(
   telefono: string
 ) {
   await requireUserId();
-  const n = nombre.trim();
+  const n = leerTexto(nombre, LIMITES.nombre);
   if (!n) return;
   const paciente = await prisma.paciente.create({
-    data: { nombre: n, telefono: telefono.trim() || null },
+    data: { nombre: n, telefono: leerTextoOpcional(telefono, LIMITES.telefono) },
   });
   await prisma.cita.update({
     where: { id: citaId },

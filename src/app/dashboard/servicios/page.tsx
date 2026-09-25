@@ -26,7 +26,7 @@ export default async function ServiciosPage() {
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
       >
         <Field label="Nombre" className="flex-1">
-          <Input name="nombre" required placeholder="Consulta, uñas, etc." />
+          <Input name="nombre" maxLength={80} required placeholder="Consulta, uñas, etc." />
         </Field>
         <Field label="Precio" className="w-28">
           <Input name="precio" required inputMode="decimal" placeholder="380" />

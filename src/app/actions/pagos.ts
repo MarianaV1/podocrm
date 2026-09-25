@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { MetodoPago } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { LIMITES, leerDinero, leerEntero, leerTextoOpcional } from "@/lib/validacion";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireAuth() {
@@ -13,13 +14,6 @@ async function requireAuth() {
   if (!user) throw new Error("No autorizado");
 }
 
-function parseDinero(v: FormDataEntryValue | null): number | null {
-  const s = String(v ?? "").replace(/[^0-9.]/g, "");
-  if (!s) return null;
-  const n = Number(s);
-  return Number.isFinite(n) && n >= 0 ? n : null;
-}
-
 function metodoDe(v: FormDataEntryValue | null): MetodoPago {
   return String(v ?? "") === "TARJETA"
     ? MetodoPago.TARJETA
@@ -27,7 +21,6 @@ function metodoDe(v: FormDataEntryValue | null): MetodoPago {
 }
 
 function revalidar() {
-  revalidatePath("/dashboard/pagos");
   revalidatePath("/dashboard/citas");
   revalidatePath("/dashboard/podologas");
   revalidatePath("/dashboard/productos");
@@ -39,17 +32,17 @@ export async function registrarPago(formData: FormData) {
   await requireAuth();
 
   const tipo = String(formData.get("tipo") ?? "servicio");
-  const monto = parseDinero(formData.get("monto"));
+  const monto = leerDinero(formData.get("monto"));
   if (monto === null) return { error: "Monto inválido." };
 
   const metodo = metodoDe(formData.get("metodo"));
   const citaId = String(formData.get("citaId") ?? "") || null;
-  const notas = String(formData.get("notas") ?? "").trim() || null;
+  const notas = leerTextoOpcional(formData.get("notas"), LIMITES.textoLargo);
 
   if (tipo === "producto") {
     const productoId = String(formData.get("productoId") ?? "") || null;
     if (!productoId) return { error: "Selecciona un producto." };
-    const cantidad = Math.max(1, Math.round(Number(formData.get("cantidad")) || 1));
+    const cantidad = leerEntero(formData.get("cantidad"), 1, 1000, 1);
 
     const producto = await prisma.producto.findUnique({
       where: { id: productoId },
@@ -87,7 +80,7 @@ export async function registrarPago(formData: FormData) {
   const servicioId = String(formData.get("servicioId") ?? "") || null;
   const podologaId = String(formData.get("podologaId") ?? "") || null;
 
-  let comision = parseDinero(formData.get("comision"));
+  let comision = leerDinero(formData.get("comision"));
   if (comision === null) {
     // Respaldo: calcular con el % FIJO de la podóloga si no se envió comisión.
     if (podologaId) {

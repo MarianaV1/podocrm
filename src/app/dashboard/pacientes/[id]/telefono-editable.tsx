@@ -50,8 +50,9 @@ export function TelefonoEditable({
         type="tel"
         inputMode="tel"
         placeholder="10 dígitos"
+        maxLength={20}
         autoFocus
-        className="w-40"
+        className="w-40!"
         onKeyDown={(e) => {
           if (e.key === "Enter") guardar();
           if (e.key === "Escape") cancelar();

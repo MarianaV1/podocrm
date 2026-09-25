@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { LIMITES, leerDinero, leerTexto } from "@/lib/validacion";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireAuth() {
@@ -12,18 +13,10 @@ async function requireAuth() {
   if (!user) throw new Error("No autorizado");
 }
 
-// Convierte "1,250.50" o "1250.5" a número; null si no es válido.
-function parseDinero(v: FormDataEntryValue | null): number | null {
-  const s = String(v ?? "").replace(/[^0-9.]/g, "");
-  if (!s) return null;
-  const n = Number(s);
-  return Number.isFinite(n) && n >= 0 ? n : null;
-}
-
 export async function crearServicio(formData: FormData) {
   await requireAuth();
-  const nombre = String(formData.get("nombre") ?? "").trim();
-  const precio = parseDinero(formData.get("precio"));
+  const nombre = leerTexto(formData.get("nombre"), LIMITES.nombre);
+  const precio = leerDinero(formData.get("precio"));
   if (!nombre || precio === null) return;
 
   await prisma.servicio.create({ data: { nombre, precio } });
@@ -32,8 +25,8 @@ export async function crearServicio(formData: FormData) {
 
 export async function editarServicio(id: string, formData: FormData) {
   await requireAuth();
-  const nombre = String(formData.get("nombre") ?? "").trim();
-  const precio = parseDinero(formData.get("precio"));
+  const nombre = leerTexto(formData.get("nombre"), LIMITES.nombre);
+  const precio = leerDinero(formData.get("precio"));
   if (!nombre || precio === null) return;
 
   await prisma.servicio.update({ where: { id }, data: { nombre, precio } });

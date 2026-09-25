@@ -16,14 +16,14 @@ export function PacienteForm() {
   return (
     <form action={action} className="flex flex-col gap-4">
       <Field label="Nombre completo *">
-        <Input name="nombre" required />
+        <Input name="nombre" maxLength={80} required />
       </Field>
 
       <Field
         label="Teléfono (WhatsApp)"
         hint="Con este número se abrirá el chat de WhatsApp desde la ficha."
       >
-        <Input name="telefono" type="tel" inputMode="tel" placeholder="10 dígitos" />
+        <Input name="telefono" maxLength={20} type="tel" inputMode="tel" placeholder="10 dígitos" />
       </Field>
 
       {state?.error && (

@@ -103,6 +103,7 @@ function Textarea({
         id={name}
         name={name}
         rows={2}
+        maxLength={1000}
         defaultValue={defaultValue ?? ""}
         className={inputClasses}
       />

@@ -53,7 +53,7 @@ export default async function PodologasPage() {
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
       >
         <Field label="Nombre" className="flex-1">
-          <Input name="nombre" required placeholder="Nombre de la podóloga" />
+          <Input name="nombre" maxLength={80} required placeholder="Nombre de la podóloga" />
         </Field>
         <Field label="Comisión %" className="w-28">
           <Input name="comisionPct" inputMode="numeric" defaultValue={30} />

@@ -5,5 +5,6 @@
 export const IS_DEMO = process.env.DEMO === "true";
 
 // Credenciales del usuario invitado (deben existir en Supabase Auth de la demo).
-export const DEMO_EMAIL = process.env.DEMO_EMAIL || "demo@demo.com";
-export const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "demo1234";
+// Sin valores por defecto: si faltan, el botón de la demo muestra un error.
+export const DEMO_EMAIL = process.env.DEMO_EMAIL ?? "";
+export const DEMO_PASSWORD = process.env.DEMO_PASSWORD ?? "";

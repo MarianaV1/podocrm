@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { LIMITES, leerTexto, leerTextoOpcional } from "@/lib/validacion";
 import { createClient } from "@/lib/supabase/server";
 
 type ActionState = { error: string } | undefined;
@@ -15,11 +16,9 @@ async function requireAuth() {
   if (!user) redirect("/login");
 }
 
-// Devuelve el texto recortado o null si está vacío.
-function texto(formData: FormData, key: string): string | null {
-  const v = String(formData.get(key) ?? "").trim();
-  return v.length > 0 ? v : null;
-}
+// Campo de texto largo de la hoja clínica (null si viene vacío).
+const texto = (formData: FormData, key: string) =>
+  leerTextoOpcional(formData.get(key), LIMITES.textoLargo);
 
 export async function crearPaciente(
   _prev: ActionState,
@@ -27,13 +26,13 @@ export async function crearPaciente(
 ): Promise<ActionState> {
   await requireAuth();
 
-  const nombre = String(formData.get("nombre") ?? "").trim();
+  const nombre = leerTexto(formData.get("nombre"), LIMITES.nombre);
   if (!nombre) return { error: "El nombre es obligatorio." };
 
   const paciente = await prisma.paciente.create({
     data: {
       nombre,
-      telefono: texto(formData, "telefono"),
+      telefono: leerTextoOpcional(formData.get("telefono"), LIMITES.telefono),
     },
   });
 
@@ -85,10 +84,9 @@ export async function guardarHoja(
 // Actualiza solo el teléfono del paciente (edición inline desde la ficha).
 export async function actualizarTelefono(pacienteId: string, telefono: string) {
   await requireAuth();
-  const t = telefono.trim();
   await prisma.paciente.update({
     where: { id: pacienteId },
-    data: { telefono: t.length > 0 ? t : null },
+    data: { telefono: leerTextoOpcional(telefono, LIMITES.telefono) },
   });
   revalidatePath(`/dashboard/pacientes/${pacienteId}`);
 }

@@ -26,7 +26,7 @@ export default async function ProductosPage() {
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
       >
         <Field label="Nombre" className="flex-1">
-          <Input name="nombre" required placeholder="Desinfectante, crema…" />
+          <Input name="nombre" maxLength={80} required placeholder="Desinfectante, crema…" />
         </Field>
         <Field label="Precio venta" className="w-24">
           <Input name="precioVenta" required inputMode="decimal" placeholder="120" />

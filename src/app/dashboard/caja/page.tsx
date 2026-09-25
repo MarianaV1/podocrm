@@ -195,6 +195,7 @@ export default async function CajaPage({
           <Field label="Concepto" className="flex-1">
             <Input
               name="concepto"
+              maxLength={120}
               required
               placeholder="Compra de material, retiro, etc."
             />

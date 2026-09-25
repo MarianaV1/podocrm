@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { LIMITES, leerEntero, leerTexto } from "@/lib/validacion";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireAuth() {
@@ -12,32 +13,23 @@ async function requireAuth() {
   if (!user) throw new Error("No autorizado");
 }
 
-// % de comisión entre 0 y 100 (default 30 si no viene un valor válido).
-function parsePct(v: FormDataEntryValue | null, fallback = 30): number {
-  const s = String(v ?? "").replace(/[^0-9]/g, "");
-  if (!s) return fallback;
-  const n = Math.round(Number(s));
-  if (!Number.isFinite(n) || n < 0) return fallback;
-  return n > 100 ? 100 : n;
-}
-
 export async function crearPodologa(formData: FormData) {
   await requireAuth();
-  const nombre = String(formData.get("nombre") ?? "").trim();
+  const nombre = leerTexto(formData.get("nombre"), LIMITES.nombre);
   if (!nombre) return;
   await prisma.podologa.create({
-    data: { nombre, comisionPct: parsePct(formData.get("comisionPct")) },
+    data: { nombre, comisionPct: leerEntero(formData.get("comisionPct"), 0, 100, 30) },
   });
   revalidatePath("/dashboard/podologas");
 }
 
 export async function editarPodologa(id: string, formData: FormData) {
   await requireAuth();
-  const nombre = String(formData.get("nombre") ?? "").trim();
+  const nombre = leerTexto(formData.get("nombre"), LIMITES.nombre);
   if (!nombre) return;
   await prisma.podologa.update({
     where: { id },
-    data: { nombre, comisionPct: parsePct(formData.get("comisionPct")) },
+    data: { nombre, comisionPct: leerEntero(formData.get("comisionPct"), 0, 100, 30) },
   });
   revalidatePath("/dashboard/podologas");
 }

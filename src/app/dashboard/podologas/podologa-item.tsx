@@ -44,7 +44,7 @@ export function PodologaItem({
         {editando ? (
           <form action={guardar} className="flex flex-wrap items-end gap-2">
             <Field label="Nombre">
-              <Input name="nombre" defaultValue={podologa.nombre} required />
+              <Input name="nombre" maxLength={80} defaultValue={podologa.nombre} required />
             </Field>
             <Field label="Comisión %" className="w-24">
               <Input

@@ -106,4 +106,5 @@ prisma/              # schema + migraciones + seed de la demo
 
 ---
 
-Proyecto desarrollado para una clínica de podología (2026). Código privado.
+Proyecto desarrollado para una clínica de podología (2026). El código se publica
+como muestra de portafolio; todos los derechos reservados.

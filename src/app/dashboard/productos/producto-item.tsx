@@ -52,7 +52,7 @@ export function ProductoItem({
       <li className="px-4 py-3">
         <form action={guardar} className="flex flex-wrap items-end gap-2">
           <Field label="Nombre" className="flex-1">
-            <Input name="nombre" defaultValue={producto.nombre} required />
+            <Input name="nombre" maxLength={80} defaultValue={producto.nombre} required />
           </Field>
           <Field label="Precio venta" className="w-24">
             <Input
