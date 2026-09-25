@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useEffectEvent,
   useMemo,
   useRef,
   useSyncExternalStore,
@@ -202,13 +203,14 @@ function TourActivo({
     d.drive();
   }, [pasos, router]);
 
-  // Primera visita: arranca solo en el panel.
+  // Primera visita: arranca solo en el panel. Se decide una vez, al montar el
+  // layout; navegar después no lo relanza.
+  const autoIniciar = useEffectEvent(() => {
+    if (pathname === "/dashboard" && leerEstado() === null) void iniciar();
+  });
   useEffect(() => {
-    if (pathname !== "/dashboard" || leerEstado() !== null) return;
-    const t = setTimeout(() => void iniciar(), 600);
+    const t = setTimeout(() => autoIniciar(), 600);
     return () => clearTimeout(t);
-    // Solo al montar el layout; no se relanza al navegar.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Si se sale del dashboard (p. ej. cerrar sesión) no debe quedar colgado.

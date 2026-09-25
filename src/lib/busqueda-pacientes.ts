@@ -10,6 +10,18 @@ import { POR_PAGINA, type leerFiltros } from "./filtros-pacientes";
 const sinAcentos = (col: Prisma.Sql) =>
   Prisma.sql`translate(lower(${col}), 'áéíóúüñ', 'aeiouun')`;
 
+// Autocompletado por nombre (selector de paciente en Citas), sin acentos.
+export async function sugerirPorNombre(q: string, limite = 8) {
+  const texto = normalizar(q);
+  if (!texto) return [];
+  return prisma.$queryRaw<{ id: string; nombre: string }[]>`
+    SELECT p.id, p.nombre
+    FROM "Paciente" p
+    WHERE ${sinAcentos(Prisma.sql`p.nombre`)} LIKE ${`%${texto}%`}
+    ORDER BY p.nombre ASC
+    LIMIT ${limite}`;
+}
+
 export async function buscarPacientes(f: ReturnType<typeof leerFiltros>) {
   const condiciones: Prisma.Sql[] = [];
 

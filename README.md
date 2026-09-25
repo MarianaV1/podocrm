@@ -12,9 +12,15 @@ botón **"Entrar a la demo"** (datos ficticios, sin registro).
 
 ## ✨ Características
 
+- **Panel con análisis** — resumen del día y tendencias de los últimos 7 días,
+  30 días o 3 meses comparadas con el periodo anterior: ingresos, pacientes
+  atendidos, ticket promedio, asistencia, ingresos por podóloga y servicios más
+  solicitados. Cada gráfica tiene su vista en tabla.
 - **Pacientes y hoja clínica** — ficha por paciente con una única hoja clínica
   (folio autoincremental), banderas médicas (diabético/hipertenso), alergias y
   condiciones destacadas. Enlace directo a WhatsApp e impresión/PDF de la hoja.
+  Buscador por nombre o teléfono (sin importar acentos), filtros de salud, orden
+  por última visita y paginación, resueltos en la base de datos.
 - **Citas** — importadas desde Google Calendar (solo lectura), agrupadas por
   semana y día, con filtro *Próximas / Anteriores*. Se marca la llegada (a tiempo
   o tarde) y se ligan al paciente (con auto-emparejado y buscador escalable).
@@ -27,7 +33,9 @@ botón **"Entrar a la demo"** (datos ficticios, sin registro).
 - **Reporte Secretaría de Salud** — listado imprimible de pacientes atendidos por
   rango de fechas (nombre, fecha, hora y podóloga).
 - **Tema claro/oscuro** y diseño responsivo (sidebar en escritorio, drawer en
-  móvil).
+  móvil), con estados de carga por página.
+- **Recorrido guiado** (solo en la demo) — tour paso a paso por el flujo de un
+  día en la clínica, con spotlight y tooltips de ayuda.
 
 ## 🛠️ Stack
 
@@ -38,6 +46,7 @@ botón **"Entrar a la demo"** (datos ficticios, sin registro).
 | Datos | Prisma 6 + PostgreSQL (Supabase) |
 | Auth | Supabase Auth (`@supabase/ssr`) |
 | Integraciones | Google Calendar API (`google-auth-library`, OAuth read-only) |
+| Onboarding | driver.js (recorrido guiado de la demo) |
 | Hosting | Vercel + Supabase |
 
 ## 🧭 Decisiones de arquitectura
@@ -90,11 +99,11 @@ src/
     login/          # autenticación
     api/            # OAuth de Google + reseteo de la demo
     actions/        # Server Actions (pacientes, pagos, caja, google, ...)
-  components/        # sidebar, ui/ (button, card, badge, input, ...), etc.
-  lib/               # prisma, supabase, fechas, matching, demo, ...
+  components/        # sidebar, ui/ (button, card, skeleton, ...), charts/, tour/
+  lib/               # prisma, supabase, fechas, estadísticas, búsqueda, demo, ...
 prisma/              # schema + migraciones + seed de la demo
 ```
 
 ---
 
-Proyecto desarrollado para una clínica de podología (2025). Código privado.
+Proyecto desarrollado para una clínica de podología (2026). Código privado.

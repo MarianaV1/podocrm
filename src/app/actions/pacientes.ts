@@ -92,10 +92,3 @@ export async function actualizarTelefono(pacienteId: string, telefono: string) {
   });
   revalidatePath(`/dashboard/pacientes/${pacienteId}`);
 }
-
-export async function eliminarPaciente(pacienteId: string) {
-  await requireAuth();
-  await prisma.paciente.delete({ where: { id: pacienteId } });
-  revalidatePath("/dashboard/pacientes");
-  redirect("/dashboard/pacientes");
-}

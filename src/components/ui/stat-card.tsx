@@ -15,7 +15,6 @@ export function StatCard({
   label,
   value,
   icon,
-  hint,
   info,
   infoAlign = "start",
   delta,
@@ -23,7 +22,6 @@ export function StatCard({
   label: string;
   value: ReactNode;
   icon?: ReactNode;
-  hint?: ReactNode;
   info?: string;
   infoAlign?: ComponentProps<typeof InfoTip>["align"];
   delta?: Delta;
@@ -38,7 +36,6 @@ export function StatCard({
         {icon && <span className="text-primary">{icon}</span>}
       </div>
       <p className="mt-2 text-2xl font-semibold tracking-tight">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
       {delta && <DeltaTexto delta={delta} />}
     </div>
   );

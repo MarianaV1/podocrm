@@ -350,10 +350,12 @@ export async function sembrarDemo(prisma: PrismaClient) {
     const dia = sumarDiasKey(hoy, offset);
     if (esDomingo(dia) || offset === 0) continue; // Domingo cerrado; hoy va aparte.
 
-    // Crecimiento: de ~5-6 citas diarias hace 6 meses a ~8 hoy; sábados más llenos.
-    const progreso = (offset + DIAS_HISTORIA) / DIAS_HISTORIA;
-    const base = 5.5 + 2.5 * Math.min(progreso, 1) + (esSabado(dia) ? 2 : 0);
-    const cuantas = Math.max(2, Math.min(HORARIOS.length, Math.round(base + (azar() - 0.5) * 3)));
+    // Crecimiento que se acelera (la clínica va ganando pacientes): de ~5-6 citas
+    // diarias hace 6 meses a ~8 hoy; sábados más llenos. Así el último mes
+    // siempre supera al anterior, sin importar el día en que se siembre.
+    const progreso = Math.min((offset + DIAS_HISTORIA) / DIAS_HISTORIA, 1);
+    const base = 5.5 + 2.5 * progreso * progreso + (esSabado(dia) ? 2 : 0);
+    const cuantas = Math.max(2, Math.min(HORARIOS.length, Math.round(base + (azar() - 0.5) * 2)));
 
     const disponibles = pacientes.filter((p) => p.altaHaceDias >= -offset);
     const usados = new Set<string>();

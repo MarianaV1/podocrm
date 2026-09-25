@@ -3,7 +3,7 @@ import type { Alignment, Side } from "driver.js";
 // Un paso del recorrido guiado. `elementos` son selectores en orden de
 // prioridad: se resalta el primero que esté visible; si ninguno lo está, el
 // popover sale centrado (p. ej. en móvil, o si otro visitante cambió los datos).
-export type PasoTour = {
+type PasoTour = {
   ruta: string;
   elementos?: string[];
   titulo: string;

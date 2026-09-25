@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { EstadoCita } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { sugerirPorNombre } from "@/lib/busqueda-pacientes";
 import { createClient } from "@/lib/supabase/server";
 import { getAuthedClient, listarEventos } from "@/lib/google";
 import { coincidenciaExacta } from "@/lib/matching";
@@ -134,22 +135,6 @@ export async function desligarPaciente(citaId: string) {
   revalidatePath("/dashboard/citas");
 }
 
-// Crea un paciente con el nombre (pre-llenado del título, editable) y lo liga.
-export async function crearPacienteDesdeCita(
-  citaId: string,
-  formData: FormData
-) {
-  await requireUserId();
-  const nombre = String(formData.get("nombre") ?? "").trim();
-  if (!nombre) return;
-  const paciente = await prisma.paciente.create({ data: { nombre } });
-  await prisma.cita.update({
-    where: { id: citaId },
-    data: { pacienteId: paciente.id },
-  });
-  revalidatePath("/dashboard/citas");
-}
-
 // Asigna (o quita, con "") la podóloga que atiende la cita.
 export async function asignarPodologa(citaId: string, podologaId: string) {
   await requireUserId();
@@ -160,19 +145,12 @@ export async function asignarPodologa(citaId: string, podologaId: string) {
   revalidatePath("/dashboard/citas");
 }
 
-// Busca pacientes por nombre (escalable: consulta a la BD, máximo 8).
+// Busca pacientes por nombre, sin importar acentos (consulta a la BD, máximo 8).
 export async function buscarPacientes(
   query: string
 ): Promise<{ id: string; nombre: string }[]> {
   await requireUserId();
-  const q = query.trim();
-  if (!q) return [];
-  return prisma.paciente.findMany({
-    where: { nombre: { contains: q, mode: "insensitive" } },
-    orderBy: { nombre: "asc" },
-    take: 8,
-    select: { id: true, nombre: true },
-  });
+  return sugerirPorNombre(query.slice(0, 80));
 }
 
 // Liga una cita a un paciente ya existente (por id).

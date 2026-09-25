@@ -13,19 +13,17 @@ export function ChartCard({
   grafica,
   tabla,
   tour,
-  className,
 }: {
   titulo: string;
   resumen?: ReactNode;
   grafica: ReactNode;
   tabla: ReactNode;
   tour?: string;
-  className?: string;
 }) {
   const [verTabla, setVerTabla] = useState(false);
 
   return (
-    <Card data-tour={tour} className={cn("flex flex-col gap-4 p-5", className)}>
+    <Card data-tour={tour} className="flex flex-col gap-4 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-sm font-semibold">{titulo}</h3>

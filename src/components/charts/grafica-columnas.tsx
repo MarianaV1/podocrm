@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 
-export type Columna = {
+type Columna = {
   clave: string;
   etiqueta: string; // eje X
   detalle: string; // encabezado del tooltip

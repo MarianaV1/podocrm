@@ -15,8 +15,8 @@ export const ORDENES = [
   { valor: "visita", label: "Última visita" },
 ] as const;
 
-export type FiltroSalud = (typeof FILTROS_SALUD)[number]["valor"];
-export type Orden = (typeof ORDENES)[number]["valor"];
+type FiltroSalud = (typeof FILTROS_SALUD)[number]["valor"];
+type Orden = (typeof ORDENES)[number]["valor"];
 
 export const POR_PAGINA = 20;
 

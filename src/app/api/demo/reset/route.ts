@@ -10,9 +10,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "No disponible" }, { status: 404 });
   }
 
+  // Sin CRON_SECRET configurado la ruta queda cerrada (nadie puede resetear).
   const secret = process.env.CRON_SECRET;
   const auth = request.headers.get("authorization");
-  if (secret && auth !== `Bearer ${secret}`) {
+  if (!secret || auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 

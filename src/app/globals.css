@@ -7,6 +7,8 @@
 /* ─── Tokens de diseño ─────────────────────────────────────────────
    Un solo acento (teal médico). Superficies planas + borde sutil. */
 :root {
+  /* Controles nativos (calendario, selects, scroll) acordes al tema. */
+  color-scheme: light;
   --background: #f6f7f8;
   --surface: #ffffff;
   --surface-2: #eef0f2;
@@ -24,6 +26,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --background: #0a0b0d;
   --surface: #16181d;
   --surface-2: #21242b;

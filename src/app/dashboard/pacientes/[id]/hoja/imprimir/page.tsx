@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { PrintButton } from "./print-button";
+import { PrintButton } from "@/components/print-button";
 
 export const metadata: Metadata = { title: "Imprimir hoja clínica" };
 
@@ -37,7 +37,7 @@ export default async function ImprimirHojaPage({
         >
           <ArrowLeft size={15} /> Volver a la ficha
         </Link>
-        <PrintButton />
+        <PrintButton label="Imprimir / Guardar PDF" />
       </div>
 
       {/* Hoja imprimible (colores fijos claros para que imprima bien) */}

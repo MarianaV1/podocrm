@@ -21,7 +21,7 @@ const fmtDiaSemana = new Intl.DateTimeFormat("es-MX", { weekday: "short", day: "
 const fmtLargo = new Intl.DateTimeFormat("es-MX", { weekday: "long", day: "numeric", month: "short", timeZone: TZ });
 const fecha = (key: string) => rangoDia(key).inicio;
 
-export type Bucket = {
+type Bucket = {
   clave: string;
   etiqueta: string; // eje X
   detalle: string; // tooltip / tabla
@@ -31,7 +31,10 @@ export type Bucket = {
   atendidos: number;
 };
 
-export type Fila = { id: string; nombre: string; valor: number; extra: number; cantidad: number };
+// Por podóloga: lo que cobró en servicios y su comisión. Por servicio: cuántas
+// veces se cobró y cuánto ingresó.
+type PorPodologa = { id: string; nombre: string; ingresos: number; comision: number; servicios: number };
+type PorServicio = { id: string; nombre: string; veces: number; ingresos: number };
 
 const cambio = (actual: number, anterior: number) =>
   anterior > 0 ? (actual - anterior) / anterior : null;
@@ -99,8 +102,8 @@ export async function obtenerEstadisticas(periodo: Periodo) {
 
   // ── Ingresos, por podóloga y por servicio ───────────────────────────
   let ingresos = 0;
-  const porPodologa = new Map<string, Fila>();
-  const porServicio = new Map<string, Fila>();
+  const porPodologa = new Map<string, PorPodologa>();
+  const porServicio = new Map<string, PorServicio>();
   for (const p of pagos) {
     const monto = Number(p.monto);
     ingresos += monto;
@@ -112,23 +115,22 @@ export async function obtenerEstadisticas(periodo: Periodo) {
     }
     if (p.servicioId) {
       if (p.podologaId) {
-        const f = porPodologa.get(p.podologaId) ?? { id: p.podologaId, nombre: "", valor: 0, extra: 0, cantidad: 0 };
-        f.valor += monto;
-        f.extra += Number(p.comision);
-        f.cantidad += 1;
+        const f = porPodologa.get(p.podologaId) ?? { id: p.podologaId, nombre: "", ingresos: 0, comision: 0, servicios: 0 };
+        f.ingresos += monto;
+        f.comision += Number(p.comision);
+        f.servicios += 1;
         porPodologa.set(p.podologaId, f);
       }
-      const s = porServicio.get(p.servicioId) ?? { id: p.servicioId, nombre: "", valor: 0, extra: 0, cantidad: 0 };
-      s.valor += 1;
-      s.extra += monto;
-      s.cantidad += 1;
+      const s = porServicio.get(p.servicioId) ?? { id: p.servicioId, nombre: "", veces: 0, ingresos: 0 };
+      s.veces += 1;
+      s.ingresos += monto;
       porServicio.set(p.servicioId, s);
     }
   }
-  const nombrar = (filas: Map<string, Fila>, catalogo: { id: string; nombre: string }[]) =>
-    [...filas.values()]
-      .map((f) => ({ ...f, nombre: catalogo.find((c) => c.id === f.id)?.nombre ?? "—" }))
-      .sort((a, b) => b.valor - a.valor);
+  const nombrar = <T extends { id: string; nombre: string }>(
+    filas: Map<string, T>,
+    catalogo: { id: string; nombre: string }[]
+  ) => [...filas.values()].map((f) => ({ ...f, nombre: catalogo.find((c) => c.id === f.id)?.nombre ?? "—" }));
 
   // ── Asistencia ──────────────────────────────────────────────────────
   const asistencia = { llego: 0, tarde: 0, noVino: 0 };
@@ -173,10 +175,8 @@ export async function obtenerEstadisticas(periodo: Periodo) {
         cambio: tasa !== null && tasaPrevia !== null ? tasa - tasaPrevia : null,
       },
     },
-    porPodologa: nombrar(porPodologa, podologas),
-    porServicio: nombrar(porServicio, servicios),
+    porPodologa: nombrar(porPodologa, podologas).sort((a, b) => b.ingresos - a.ingresos),
+    porServicio: nombrar(porServicio, servicios).sort((a, b) => b.veces - a.veces),
     asistencia,
   };
 }
-
-export type Estadisticas = Awaited<ReturnType<typeof obtenerEstadisticas>>;

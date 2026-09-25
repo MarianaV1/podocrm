@@ -234,9 +234,9 @@ export default async function DashboardPage({
                 filas={stats.porPodologa.map((f) => ({
                   id: f.id,
                   nombre: f.nombre,
-                  valor: f.valor,
-                  valorTexto: fmt0.format(f.valor),
-                  detalle: `${f.cantidad} servicios · comisión ${fmt0.format(f.extra)}`,
+                  valor: f.ingresos,
+                  valorTexto: fmt0.format(f.ingresos),
+                  detalle: `${f.servicios} servicios · comisión ${fmt0.format(f.comision)}`,
                 }))}
               />
             }
@@ -245,9 +245,9 @@ export default async function DashboardPage({
                 columnas={["Podóloga", "Servicios", "Ingresos", "Comisión"]}
                 filas={stats.porPodologa.map((f) => [
                   f.nombre,
-                  f.cantidad,
-                  fmt0.format(f.valor),
-                  fmt0.format(f.extra),
+                  f.servicios,
+                  fmt0.format(f.ingresos),
+                  fmt0.format(f.comision),
                 ])}
               />
             }
@@ -260,16 +260,16 @@ export default async function DashboardPage({
                 filas={stats.porServicio.slice(0, 5).map((f) => ({
                   id: f.id,
                   nombre: f.nombre,
-                  valor: f.valor,
-                  valorTexto: f.valor.toLocaleString("es-MX"),
-                  detalle: `${fmt0.format(f.extra)} en ingresos`,
+                  valor: f.veces,
+                  valorTexto: f.veces.toLocaleString("es-MX"),
+                  detalle: `${fmt0.format(f.ingresos)} en ingresos`,
                 }))}
               />
             }
             tabla={
               <TablaDatos
                 columnas={["Servicio", "Veces", "Ingresos"]}
-                filas={stats.porServicio.map((f) => [f.nombre, f.valor, fmt0.format(f.extra)])}
+                filas={stats.porServicio.map((f) => [f.nombre, f.veces, fmt0.format(f.ingresos)])}
               />
             }
           />

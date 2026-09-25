@@ -38,6 +38,11 @@ Un CRM web hecho a la medida del negocio, que cubre todo el ciclo:
   descuentan stock y registran utilidad.
 - **Corte de caja y reportes** — totales del día por método de pago, efectivo
   esperado en caja y el reporte de pacientes atendidos listo para imprimir.
+- **Panel con análisis del negocio** — ingresos, pacientes atendidos, ticket
+  promedio y asistencia comparados con el periodo anterior, además de ingresos
+  por podóloga y servicios más solicitados.
+- **Búsqueda de pacientes** por nombre o teléfono (sin importar acentos), con
+  filtros de salud y orden por última visita.
 
 ## Decisiones técnicas destacadas
 
@@ -58,7 +63,13 @@ Un CRM web hecho a la medida del negocio, que cubre todo el ciclo:
   reutilizables) mantiene la interfaz consistente y ligera.
 - **Una demo pública sin exponer datos reales.** Misma base de código, pero con
   base de datos y despliegue **separados**: la versión de portafolio usa datos
-  ficticios, login de invitado y un reseteo diario automático.
+  ficticios, login de invitado y un reseteo diario automático. Los datos simulan
+  seis meses de operación (generados de forma determinista) para que las
+  gráficas cuenten una historia, y un recorrido guiado explica el producto a
+  quien lo abre por primera vez.
+- **Gráficas propias, accesibles y ligeras.** Hechas con HTML/CSS (sin librería
+  de gráficas), con colores validados contra daltonismo en ambos temas, tooltip
+  con teclado y una vista en tabla de cada gráfica.
 
 ## Resultado
 
@@ -67,12 +78,15 @@ Un CRM web hecho a la medida del negocio, que cubre todo el ciclo:
 - Comisiones calculadas automáticamente y desglosadas por método de pago.
 - Reporte para la Secretaría de Salud en un clic.
 - Corte de caja diario que cuadra el efectivo esperado.
-- Una demo en vivo que cualquiera puede probar sin registrarse.
+- Visión del negocio de un vistazo: tendencias de ingresos y asistencia.
+- Una demo en vivo que cualquiera puede probar sin registrarse, con recorrido
+  guiado.
 
 ## Stack
 
 `Next.js 16` · `React 19` · `TypeScript` · `Tailwind CSS 4` · `Prisma` ·
-`PostgreSQL (Supabase)` · `Supabase Auth` · `Google Calendar API` · `Vercel`
+`PostgreSQL (Supabase)` · `Supabase Auth` · `Google Calendar API` · `driver.js` ·
+`Vercel`
 
 ---
 
@@ -83,6 +97,8 @@ Un CRM web hecho a la medida del negocio, que cubre todo el ciclo:
 |---|---|
 | Login / acceso a demo | ![Login](screenshots/login.png) |
 | Panel del día | ![Panel](screenshots/panel.png) |
+| Tendencias del negocio | ![Tendencias](screenshots/tendencias.png) |
 | Citas agrupadas por semana | ![Citas](screenshots/citas.png) |
+| Pacientes con buscador y filtros | ![Pacientes](screenshots/pacientes.png) |
 | Corte de caja | ![Caja](screenshots/caja.png) |
 | Ficha del paciente | ![Ficha](screenshots/ficha.png) |
