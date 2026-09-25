@@ -13,7 +13,10 @@ export const config = {
      * Corre en todas las rutas excepto:
      * - _next/static y _next/image (assets internos de Next)
      * - favicon.ico e imágenes estáticas
+     * - opengraph-image: la piden WhatsApp/LinkedIn/X sin sesión al compartir
+     * - api/demo/reset: la llama el cron de Vercel sin sesión (se protege
+     *   con CRON_SECRET dentro de la ruta)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|opengraph-image|api/demo/reset|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

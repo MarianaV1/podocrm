@@ -32,6 +32,14 @@ export function crearPasos(pacienteEjemploId: string | null): PasoTour[] {
         "Lo que entró hoy, separado en efectivo y tarjeta, y cuántos pacientes se atendieron. Se actualiza solo con cada cobro.",
     },
     {
+      ruta: "/dashboard",
+      elementos: [sel("tendencias")],
+      titulo: "Cómo va el negocio",
+      texto:
+        "Ingresos, pacientes atendidos y asistencia de los últimos 7 días, 30 días o 3 meses, comparados con el periodo anterior. Pasa el cursor sobre las barras para ver el detalle.",
+      interactivo: true,
+    },
+    {
       ruta: "/dashboard/citas",
       elementos: [sel("cita")],
       titulo: "La agenda",

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,6 +11,8 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { TelefonoEditable } from "./telefono-editable";
 
+export const metadata: Metadata = { title: "Ficha del paciente" };
+
 const fmtFechaHora = new Intl.DateTimeFormat("es-MX", {
   weekday: "short",
   day: "numeric",
@@ -17,6 +20,7 @@ const fmtFechaHora = new Intl.DateTimeFormat("es-MX", {
   year: "numeric",
   hour: "2-digit",
   minute: "2-digit",
+  timeZone: "America/Mexico_City",
 });
 
 export default async function PacientePage({

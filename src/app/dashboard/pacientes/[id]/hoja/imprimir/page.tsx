@@ -1,11 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { PrintButton } from "./print-button";
 
+export const metadata: Metadata = { title: "Imprimir hoja clínica" };
+
 function fmt(d: Date) {
-  return new Intl.DateTimeFormat("es-MX", { dateStyle: "long" }).format(d);
+  return new Intl.DateTimeFormat("es-MX", {
+    dateStyle: "long",
+    timeZone: "America/Mexico_City",
+  }).format(d);
 }
 
 export default async function ImprimirHojaPage({

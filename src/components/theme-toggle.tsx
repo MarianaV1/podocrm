@@ -1,30 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [mounted, setMounted] = useState(false);
+type Tema = "light" | "dark";
 
-  useEffect(() => {
-    setMounted(true);
-    setTheme(
-      document.documentElement.dataset.theme === "dark" ? "dark" : "light"
-    );
-  }, []);
+// El tema vive en <html data-theme>, que fija el script del layout antes del
+// primer paint. Este componente solo lo lee y lo cambia.
+const oyentes = new Set<() => void>();
+
+function suscribir(cb: () => void) {
+  oyentes.add(cb);
+  return () => {
+    oyentes.delete(cb);
+  };
+}
+
+const leerTema = (): Tema =>
+  document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+
+export function ThemeToggle({ className }: { className?: string }) {
+  // En el servidor no se conoce el tema: null hasta hidratar.
+  const tema = useSyncExternalStore<Tema | null>(suscribir, leerTema, () => null);
 
   function toggle() {
-    const next = theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
+    const siguiente: Tema = leerTema() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = siguiente;
     try {
-      localStorage.setItem("theme", next);
+      localStorage.setItem("theme", siguiente);
     } catch {}
-    setTheme(next);
+    oyentes.forEach((cb) => cb());
   }
 
-  const esOscuro = theme === "dark";
+  const esOscuro = tema === "dark";
 
   return (
     <button
@@ -35,8 +44,8 @@ export function ThemeToggle({ className }: { className?: string }) {
         className
       )}
     >
-      {mounted && esOscuro ? <Sun size={15} /> : <Moon size={15} />}
-      <span>{mounted && esOscuro ? "Claro" : "Oscuro"}</span>
+      {esOscuro ? <Sun size={15} /> : <Moon size={15} />}
+      <span>{esOscuro ? "Claro" : "Oscuro"}</span>
     </button>
   );
 }

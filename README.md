@@ -66,6 +66,9 @@ pnpm dev
 
 Variables de entorno: ver [`.env.example`](.env.example).
 
+Por defecto la terminal no muestra las consultas SQL. Para verlas, define
+`PRISMA_LOG=query` al arrancar (en PowerShell: `$env:PRISMA_LOG="query"; pnpm dev`).
+
 ## 🧪 Modo demo
 
 Con `DEMO=true` la app cambia a un modo pensado para mostrarla sin fricción:

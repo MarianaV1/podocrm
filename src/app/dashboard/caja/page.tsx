@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Wallet, Banknote, CreditCard } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -11,6 +12,8 @@ import { Field, Input, Select } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { InfoTip } from "@/components/ui/info-tip";
 import { SelectorDia } from "./selector-dia";
+
+export const metadata: Metadata = { title: "Corte de caja" };
 
 const fmt = new Intl.NumberFormat("es-MX", {
   style: "currency",

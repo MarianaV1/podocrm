@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { hoyMX, inicioDeMesMX, rangoFechas, fechaLegible } from "@/lib/fecha";
 import { PrintButton } from "@/components/print-button";
@@ -6,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { InfoTip } from "@/components/ui/info-tip";
+
+export const metadata: Metadata = { title: "Reporte Secretaría de Salud" };
 
 const fmtFecha = new Intl.DateTimeFormat("es-MX", {
   day: "2-digit",

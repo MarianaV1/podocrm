@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { crearServicio } from "@/app/actions/servicios";
 import { PageHeader } from "@/components/ui/page-header";
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ServicioItem } from "./servicio-item";
+
+export const metadata: Metadata = { title: "Servicios" };
 
 export default async function ServiciosPage() {
   const servicios = await prisma.servicio.findMany({

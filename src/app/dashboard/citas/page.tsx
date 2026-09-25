@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import type { EstadoCita, Prisma } from "@prisma/client";
 import { Check, Clock, X, RotateCcw, RefreshCw, Lightbulb } from "lucide-react";
@@ -39,12 +40,15 @@ import { PodologaSelect } from "./podologa-select";
 import { PacientePicker } from "./paciente-picker";
 import { PagoBoton } from "./pago-boton";
 
+export const metadata: Metadata = { title: "Citas" };
+
 const fmtFechaHora = new Intl.DateTimeFormat("es-MX", {
   weekday: "short",
   day: "numeric",
   month: "short",
   hour: "2-digit",
   minute: "2-digit",
+  timeZone: "America/Mexico_City",
 });
 
 const fmtMoneda = new Intl.NumberFormat("es-MX", {

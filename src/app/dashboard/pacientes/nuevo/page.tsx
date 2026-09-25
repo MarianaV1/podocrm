@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { PacienteForm } from "./paciente-form";
+
+export const metadata: Metadata = { title: "Nuevo paciente" };
 
 export default function NuevoPacientePage() {
   return (

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { crearPodologa } from "@/app/actions/podologas";
 import { PageHeader } from "@/components/ui/page-header";
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PodologaItem } from "./podologa-item";
+
+export const metadata: Metadata = { title: "Podólogas" };
 
 export default async function PodologasPage() {
   const [podologas, comisiones] = await Promise.all([

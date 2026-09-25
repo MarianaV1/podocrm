@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Footprints } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -5,6 +6,8 @@ import { IS_DEMO } from "@/lib/demo";
 import { entrarDemo } from "@/app/actions/auth";
 import { buttonClasses } from "@/components/ui/button";
 import { LoginForm } from "./login-form";
+
+export const metadata: Metadata = { title: "Iniciar sesión" };
 
 export default async function LoginPage({
   searchParams,

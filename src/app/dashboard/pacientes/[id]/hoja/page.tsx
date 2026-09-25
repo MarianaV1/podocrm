@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { HojaForm } from "./hoja-form";
+
+export const metadata: Metadata = { title: "Hoja clínica" };
 
 export default async function HojaPage({
   params,
